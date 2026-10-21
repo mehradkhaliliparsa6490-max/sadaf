@@ -70,6 +70,20 @@
   .badge-building { background:#e0e7ff; color:#3730a3; } .badge-construction { background:#fce7f3; color:#9d174d; }
   .badge-fund { background:#fef3c7; color:#78350f; border:1px solid #fbbf24; }
   .badge-payment-regular { background:#e0e7ff; color:#3730a3; } .badge-payment-building { background:#fef3c7; color:#78350f; border:1px solid #fbbf24; }
+  .badge-new { background:#dcfce7; color:#166534; border:1px solid #86efac; }
+  .badge-old { background:#f1f5f9; color:#64748b; border:1px solid #cbd5e1; }
+  .badge-unknown { background:#fef3c7; color:#92400e; border:1px solid #fbbf24; }
+  .badge-future { background:#dbeafe; color:#1e40af; border:1px solid #93c5fd; }
+  .bill-filter-bar { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; align-items:center; }
+  .bill-filter-btn { padding:7px 14px; border-radius:8px; border:1.5px solid var(--border); background:#fff; font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; transition:all .2s; color:var(--text); display:inline-flex; align-items:center; gap:5px; }
+  .bill-filter-btn:hover { border-color:var(--primary); background:var(--primary-lighter); }
+  .bill-filter-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+  .bill-filter-btn .count { display:inline-block; background:rgba(0,0,0,.1); padding:1px 7px; border-radius:10px; font-size:11px; font-weight:700; }
+  .bill-filter-btn.active .count { background:rgba(255,255,255,.3); }
+  .bill-info-banner { padding:8px 12px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; font-size:12px; color:#1e40af; margin-bottom:10px; font-weight:500; line-height:1.8; }
+  .bill-info-banner strong { color:#1e3a8a; }
+  .bill-info-banner.warn { background:#fef3c7; border-color:#fbbf24; color:#78350f; }
+  .bill-info-banner.warn strong { color:#451a03; }
   .modal-overlay { position:fixed; inset:0; background:rgba(15,23,42,.65); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; z-index:1000; padding:14px; overflow-y:auto; }
   .modal-overlay.show { display:flex; }
   .modal { background:#fff; border-radius:16px; padding:20px; max-width:500px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,.3); max-height:92vh; overflow-y:auto; animation:modalIn .25s ease; }
@@ -142,6 +156,7 @@
   .balance-label.debt { color:var(--danger); }
   .balance-label.credit { color:var(--success); }
   .balance-label.settled { color:var(--muted); }
+  .balance-label.manual-debt { color:#b91c1c; background:#fef2f2; padding:2px 8px; border-radius:6px; display:inline-block; font-size:11px; border:1px solid #fca5a5; }
   .balance-summary { margin-top:12px; padding:12px 14px; background:linear-gradient(135deg,#f8fafc,#eef2f7); border-radius:10px; border:1px dashed var(--border); }
   .balance-summary .title-sm { font-size:12.5px; font-weight:800; color:var(--primary-dark); margin-bottom:6px; }
   .balance-summary .s-item { display:flex; align-items:flex-start; gap:6px; font-size:12.5px; line-height:1.9; margin-bottom:5px; flex-wrap:wrap; }
@@ -208,6 +223,7 @@
     .bill-info-item { padding:4px 9px!important; font-size:12px!important; }
     .bill-info-item .k { font-size:12px!important; font-weight:700!important; }
     .bill-info-item .v { font-weight:900!important; font-size:12px!important; }
+    .bill-info-banner { display:none!important; }
     .report-body { padding:4px 14px 5px!important; flex:1; display:flex; flex-direction:column; min-height:0; overflow:hidden; }
     .table-wrap { overflow:visible!important; flex-shrink:0; }
     .report-table { margin-top:0!important; flex-shrink:0; }
@@ -286,6 +302,10 @@
     <section class="card">
       <h2><span class="num">۲</span> قبض‌ها و هزینه‌ها</h2>
       <button class="btn" onclick="openBillModal()" style="margin-bottom:10px;">➕ افزودن قبض جدید</button>
+      <div class="bill-info-banner">
+        📅 <strong>قانون ۱۰ روز (بر اساس تاریخ خود قبض):</strong> قبض‌هایی که بیش از ۱۰ روز از <strong>تاریخ قبض</strong>شان گذشته باشد، در <strong>گزارش اهالی نمایش داده نمی‌شوند</strong> (سهم‌شان همچنان در محاسبه بدهی/بستانکاری باقی می‌ماند).
+      </div>
+      <div class="bill-filter-bar" id="billFilterBar"></div>
       <div class="table-wrap"><table id="billsTable"></table></div>
     </section>
 
@@ -411,6 +431,7 @@ function load(key, fallback) {
     }
   }
 })();
+
 let units = load(STORAGE_KEYS.units, []);
 let bills = load(STORAGE_KEYS.bills, []);
 let payments = load(STORAGE_KEYS.payments, []);
@@ -419,6 +440,8 @@ let buildingName = load(STORAGE_KEYS.buildingName, 'ساختمان صدف');
 let cardInfo = load(STORAGE_KEYS.cardInfo, { number: '', holder: '' });
 let currentTheme = load(STORAGE_KEYS.theme, 'blue');
 let adjustments = load(STORAGE_KEYS.adjustments, {});
+let billFilter = 'all'; // 'all' | 'recent' | 'old'
+
 function save() {
   localStorage.setItem(STORAGE_KEYS.units, JSON.stringify(units));
   localStorage.setItem(STORAGE_KEYS.bills, JSON.stringify(bills));
@@ -459,6 +482,79 @@ function attachPersianNumeric(id) {
 }
 ['unitResidents','unitArea','paymentAmount','cardNumber','adjAmount'].forEach(attachPersianNumeric);
 
+/* ================= قانون ۱۰ روزه — بر اساس تاریخ خود قبض ================= */
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * تاریخ قبض (رشته YYYY-MM-DD میلادی از input type=date) را به Date نیمه‌شب محلی تبدیل می‌کند.
+ * اگر تاریخ خالی یا نامعتبر باشد null برمی‌گرداند.
+ */
+function getBillDateAtMidnight(b) {
+  if (!b || !b.date) return null;
+  const parts = String(b.date).split('-');
+  if (parts.length !== 3) return null;
+  const y = parseInt(parts[0], 10);
+  const m = parseInt(parts[1], 10) - 1;
+  const d = parseInt(parts[2], 10);
+  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return null;
+  const dt = new Date(y, m, d);
+  if (isNaN(dt.getTime())) return null;
+  dt.setHours(0, 0, 0, 0);
+  return dt;
+}
+
+/**
+ * تعداد روزهای سپری‌شده از تاریخ قبض تا امروز.
+ * اگر تاریخ نامشخص باشد null. اگر تاریخ در آینده باشد عدد منفی.
+ */
+function billDaysSince(b) {
+  const billDate = getBillDateAtMidnight(b);
+  if (!billDate) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const diffMs = today.getTime() - billDate.getTime();
+  return Math.round(diffMs / DAY_MS);
+}
+
+/**
+ * آیا قبض در بازه ۱۰ روز اخیر (بر اساس تاریخ خود قبض) قرار دارد؟
+ * - تاریخ نامشخص → true (محافظه‌کارانه در گزارش نشان داده می‌شود)
+ * - تاریخ در آینده → true
+ * - 0 تا 9 روز گذشته → true
+ * - 10 روز یا بیشتر → false
+ */
+function isBillRecent(b) {
+  const days = billDaysSince(b);
+  if (days === null) return true;
+  return days < 10;
+}
+
+/**
+ * بج وضعیت قبض بر اساس تاریخ خود قبض.
+ */
+function billStatusBadge(b) {
+  const days = billDaysSince(b);
+  if (days === null) {
+    return '<span class="badge badge-unknown" title="تاریخ قبض ثبت نشده است — همیشه در گزارش نمایش داده می‌شود">❓ تاریخ نامشخص</span>';
+  }
+  if (days < 0) {
+    return `<span class="badge badge-future" title="تاریخ قبض در آینده است">🆕 ${toFa(Math.abs(days))} روز آینده</span>`;
+  }
+  if (days < 10) {
+    const rem = 10 - days;
+    return `<span class="badge badge-new" title="در گزارش اهالی نمایش داده می‌شود">🆕 ${toFa(rem)} روز مانده</span>`;
+  }
+  return `<span class="badge badge-old" title="در گزارش اهالی نمایش داده نمی‌شود">📦 ${toFa(days)} روز گذشته</span>`;
+}
+
+function getFilteredBills() {
+  if (billFilter === 'recent') return bills.filter(isBillRecent);
+  if (billFilter === 'old') return bills.filter(b => !isBillRecent(b));
+  return bills;
+}
+function setBillFilter(f) { billFilter = f; render(); }
+
+/* ================= پرداخت ================= */
 let selectedPayType = 'regular';
 function selectPayType(type) {
   selectedPayType = type;
@@ -531,7 +627,8 @@ function showReport() {
   document.getElementById('managePage').style.display = 'none';
   document.getElementById('reportPage').style.display = 'block';
   syncPaidStatus();
-  render(); setTimeout(scrollToTop, 20);
+  render();
+  setTimeout(scrollToTop, 20);
 }
 function hideReport() {
   document.getElementById('reportPage').style.display = 'none';
@@ -627,11 +724,13 @@ function renderBillPicker(content) {
       ${bills.map(b => {
         const t = BILL_TYPES[b.type] || BILL_TYPES['ساختمان'];
         const isFund = b.fundSource === 'fund';
+        const days = billDaysSince(b);
+        const dayTxt = days === null ? '❓' : (days < 10 ? `🆕 ${toFa(10 - Math.max(0, days))}ر` : `📦 ${toFa(days)}ر`);
         return `<button class="choice-btn" style="width:100%;flex-direction:row;justify-content:flex-start;text-align:right;padding:12px;margin-bottom:8px;" onclick="renderBillForm(document.getElementById('billModalContent'), ${b.id})">
           <span class="icon" style="font-size:20px;">${t.icon}</span>
           <div style="flex:1;">
             <div style="font-weight:700;">${esc(b.name || b.title || 'بدون نام')} ${isFund ? '💰' : ''}</div>
-            <div style="font-size:12px;color:var(--muted);font-weight:500;margin-top:2px;">${BILL_TYPE_LABELS[b.type] || b.type}${isFund ? ' (از صندوق)' : ''} • ${format(b.amount)} تومان</div>
+            <div style="font-size:12px;color:var(--muted);font-weight:500;margin-top:2px;">${BILL_TYPE_LABELS[b.type] || b.type}${isFund ? ' (از صندوق)' : ''} • ${format(b.amount)} تومان • ${dayTxt}</div>
           </div>
         </button>`;
       }).join('')}
@@ -667,9 +766,10 @@ function renderBillForm(content, editId) {
     </div>
     <div id="bm_fundHint"></div>
     <div class="form-row">
-      <label style="font-size:13px;font-weight:600;color:var(--muted);">تاریخ:</label>
+      <label style="font-size:13px;font-weight:600;color:var(--muted);">تاریخ قبض:</label>
       <input id="bm_date" type="date" value="${dateVal}">
     </div>
+    <p class="hint" style="margin-top:0;">📅 تاریخ قبض مبنای <strong>قانون ۱۰ روزه گزارش اهالی</strong> است. بدون تاریخ، قبض همیشه در گزارش نمایش داده می‌شود.</p>
     <div class="form-row">
       <label style="font-size:13px;font-weight:600;color:var(--muted);">مبلغ (تومان):</label>
       <input id="bm_amount" type="text" inputmode="numeric" placeholder="مبلغ" value="${amountFa}">
@@ -727,6 +827,9 @@ function saveBill(editId) {
   const fundSourceEl = document.getElementById('bm_fundSource');
   const fundSource = (type === 'عمرانی' && fundSourceEl) ? fundSourceEl.value : 'residents';
   if (!name) return alert('نام قبض را وارد کنید');
+  if (!date) {
+    if (!confirm('تاریخ قبض خالی است. بدون تاریخ، این قبض همیشه در گزارش اهالی نمایش داده می‌شود (قانون ۱۰ روزه اعمال نمی‌شود). با این حال ذخیره شود؟')) return;
+  }
   if (!amount || amount <= 0) return alert('مبلغ قبض را وارد کنید');
   let shares = {};
   if (fundSource === 'fund') { units.forEach(u => { shares[u.id] = 0; }); }
@@ -741,7 +844,10 @@ function saveBill(editId) {
   const billData = { name, type, date, amount, method, shares, fundSource };
   if (editId) {
     const idx = bills.findIndex(b => b.id === editId);
-    if (idx !== -1) bills[idx] = { ...bills[idx], ...billData };
+    if (idx !== -1) {
+      // createdAt و id حفظ می‌شوند
+      bills[idx] = { ...bills[idx], ...billData };
+    }
   } else {
     bills.push({ id: Date.now(), ...billData });
   }
@@ -822,7 +928,7 @@ function saveCardInfo() {
   save(); alert('✅ اطلاعات کارت ذخیره شد'); render();
 }
 function backupData() {
-  const data = { units, bills, payments, paidStatus, adjustments, buildingName, cardInfo, theme: currentTheme, version: 2, date: new Date().toISOString() };
+  const data = { units, bills, payments, paidStatus, adjustments, buildingName, cardInfo, theme: currentTheme, version: 3, date: new Date().toISOString() };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -865,6 +971,7 @@ function preparePrintLayout() {
   document.documentElement.style.setProperty('--print-scale', s);
 }
 window.addEventListener('beforeprint', preparePrintLayout);
+
 function render() {
   syncPaidStatus();
   preparePrintLayout();
@@ -919,13 +1026,33 @@ function render() {
       <td style="font-size:12px;">${u.phone ? toFa(u.phone) : '—'}</td>
       <td><button class="btn btn-danger btn-sm" onclick="removeUnit(${u.id})">حذف</button></td>
     </tr>`).join('') : `<tr><td colspan="5" class="empty">هنوز واحدی اضافه نشده است</td></tr>`) + `</tbody>`;
+
+  /* ============ فیلتر بازه زمانی قبض‌ها (بر اساس تاریخ خود قبض) ============ */
+  const recentCount = bills.filter(isBillRecent).length;
+  const oldCount = bills.length - recentCount;
+  const filterBar = document.getElementById('billFilterBar');
+  if (filterBar) {
+    filterBar.innerHTML = `
+      <button class="bill-filter-btn ${billFilter === 'all' ? 'active' : ''}" onclick="setBillFilter('all')" type="button">
+        📋 همه <span class="count">${toFa(bills.length)}</span>
+      </button>
+      <button class="bill-filter-btn ${billFilter === 'recent' ? 'active' : ''}" onclick="setBillFilter('recent')" type="button" title="بر اساس تاریخ خود قبض">
+        🆕 ۱۰ روز اخیر <span class="count">${toFa(recentCount)}</span>
+      </button>
+      <button class="bill-filter-btn ${billFilter === 'old' ? 'active' : ''}" onclick="setBillFilter('old')" type="button" title="بر اساس تاریخ خود قبض">
+        📦 قدیمی‌تر از ۱۰ روز <span class="count">${toFa(oldCount)}</span>
+      </button>`;
+  }
+
+  const filteredBills = getFilteredBills();
   document.getElementById('billsTable').innerHTML =
-    `<thead><tr><th>نوع</th><th>نام قبض</th><th>تاریخ</th><th>مبلغ</th><th>منبع/روش</th><th>عملیات</th></tr></thead><tbody>` +
-    (bills.length ? bills.map(b => {
+    `<thead><tr><th>وضعیت</th><th>نوع</th><th>نام قبض</th><th>تاریخ قبض</th><th>مبلغ</th><th>منبع/روش</th><th>عملیات</th></tr></thead><tbody>` +
+    (filteredBills.length ? filteredBills.map(b => {
       const t = BILL_TYPES[b.type] || BILL_TYPES['ساختمان'];
       const isFund = b.fundSource === 'fund';
       const sourceText = isFund ? '<span class="badge badge-fund">💰 از صندوق</span>' : methodName(b.method);
       return `<tr>
+        <td>${billStatusBadge(b)}</td>
         <td><span class="badge ${t.badge}">${t.icon} ${esc(b.type)}</span></td>
         <td style="font-weight:600;">${esc(b.name || b.title || '—')}</td>
         <td>${formatDate(b.date)}</td>
@@ -935,7 +1062,8 @@ function render() {
           <button class="btn btn-sm" onclick="openBillModal(${b.id})" style="padding:4px 8px;font-size:11.5px;">✏️</button>
           <button class="btn btn-danger btn-sm" onclick="removeBill(${b.id})" style="padding:4px 8px;font-size:11.5px;">🗑️</button>
         </td></tr>`;
-    }).join('') : `<tr><td colspan="6" class="empty">هنوز قبضی ثبت نشده است</td></tr>`) + `</tbody>`;
+    }).join('') : `<tr><td colspan="7" class="empty">${bills.length === 0 ? 'هنوز قبضی ثبت نشده است' : 'در این بازه قبضی وجود ندارد'}</td></tr>`) + `</tbody>`;
+
   const sel = document.getElementById('paymentUnit');
   const prevVal = sel.value;
   sel.innerHTML = units.length ? units.map(u => `<option value="${u.id}">${esc(u.name)}</option>`).join('') : '<option value="">—</option>';
@@ -1011,16 +1139,35 @@ function render() {
     </tr></thead><tbody>${adjRows}</tbody>`;
   renderReport();
 }
+
+/* ================ گزارش اهالی — هوشمند، بر اساس تاریخ خود قبض ================ */
 function renderReport() {
   document.getElementById('reportDate').textContent = todayFa();
   document.getElementById('reportUnitsCount').textContent = toFa(units.length);
-  const totalBills = bills.reduce((s, b) => s + b.amount, 0);
   const fundData = getFundData();
   const billInfoBox = document.getElementById('billInfoBox');
-  if (bills.length === 0) {
-    billInfoBox.innerHTML = `<h3>📋 مشخصات هزینه‌ها</h3><div class="empty" style="padding:10px;">هنوز قبضی ثبت نشده است</div>`;
+
+  const recentBills = bills.filter(isBillRecent);
+  const oldBills = bills.filter(b => !isBillRecent(b));
+  const recentTotal = recentBills.reduce((s, b) => s + b.amount, 0);
+  const oldTotal = oldBills.reduce((s, b) => s + b.amount, 0);
+  const unknownDateCount = bills.filter(b => billDaysSince(b) === null).length;
+
+  // نمایش فقط قبض‌های ۱۰ روز اخیر (بر اساس تاریخ خود قبض)
+  if (recentBills.length === 0) {
+    billInfoBox.innerHTML = `
+      <h3>📋 هزینه‌های اخیر (۱۰ روز گذشته)</h3>
+      <div class="empty" style="padding:10px;">قبض جدیدی با تاریخ ۱۰ روز اخیر ثبت نشده است</div>
+      ${oldBills.length > 0 ? `
+        <div class="bill-info-banner warn">
+          ⚠️ ${toFa(oldBills.length)} قبض با تاریخ قدیمی‌تر از ۱۰ روز (جمع ${format(oldTotal)} تومان) در این گزارش <strong>نمایش داده نشده</strong> است، اما سهم آن‌ها در محاسبه بدهی/بستانکاری واحدها لحاظ شده است.
+        </div>` : ''}
+      ${unknownDateCount > 0 ? `
+        <div class="bill-info-banner warn" style="margin-top:6px;">
+          ❓ ${toFa(unknownDateCount)} قبض بدون تاریخ ثبت شده که همیشه نمایش داده می‌شود. لطفاً تاریخ آن‌ها را در سیستم تکمیل کنید.
+        </div>` : ''}`;
   } else {
-    const items = bills.map(b => {
+    const items = recentBills.map(b => {
       const t = BILL_TYPES[b.type] || BILL_TYPES['ساختمان'];
       const isFund = b.fundSource === 'fund';
       return `<div class="bill-info-item ${isFund ? 'fund-item' : ''}">
@@ -1029,32 +1176,55 @@ function renderReport() {
       </div>`;
     }).join('');
     billInfoBox.innerHTML = `
-      <h3>📋 مشخصات هزینه‌های صادرشده</h3>
+      <h3>📋 هزینه‌های ۱۰ روز اخیر (بر اساس تاریخ قبض)</h3>
       <div class="bill-info-grid">
         ${items}
         <div class="bill-info-item" style="background:var(--primary-lighter);border-color:var(--primary-light);">
-          <span class="k" style="color:var(--primary-dark);font-weight:800;">جمع کل</span>
-          <span class="v" style="color:var(--primary-dark);">${format(totalBills)} تومان</span>
+          <span class="k" style="color:var(--primary-dark);font-weight:800;">جمع این دوره</span>
+          <span class="v" style="color:var(--primary-dark);">${format(recentTotal)} تومان</span>
         </div>
-      </div>`;
+      </div>
+      ${oldBills.length > 0 ? `
+        <div class="bill-info-banner warn" style="margin-top:8px;margin-bottom:0;">
+          ⚠️ ${toFa(oldBills.length)} قبض با تاریخ قدیمی‌تر از ۱۰ روز (جمع ${format(oldTotal)} تومان) در این گزارش <strong>نمایش داده نشده</strong> است، اما سهم آن‌ها در محاسبه بدهی/بستانکاری واحدها لحاظ شده است.
+        </div>` : ''}
+      ${unknownDateCount > 0 ? `
+        <div class="bill-info-banner warn" style="margin-top:6px;margin-bottom:0;">
+          ❓ ${toFa(unknownDateCount)} قبض بدون تاریخ، همیشه نمایش داده می‌شود. لطفاً تاریخ آن‌ها را تکمیل کنید.
+        </div>` : ''}`;
   }
+
   const reportArea = document.getElementById('reportArea');
   if (units.length === 0) {
     reportArea.innerHTML = `<div class="empty">برای نمایش صورت‌حساب ابتدا واحدها را اضافه کنید</div>`;
     return;
   }
-  let rows = '', sumShare = 0, sumBalance = 0, paidCount = 0;
+
+  let rows = '', sumBalance = 0, paidCount = 0;
   const debtors = [], creditors = [], settled = [];
+
   units.forEach(u => {
-    const { totalShare, balance } = getUnitBalance(u.id);
-    sumShare += totalShare;
+    const { balance } = getUnitBalance(u.id);
     sumBalance += balance;
     const isPaid = !!paidStatus[u.id];
     if (isPaid) paidCount++;
-    if (balance < 0) debtors.push({ name: u.name, amount: Math.abs(balance) });
-    else if (balance > 0) creditors.push({ name: u.name, amount: balance });
-    else settled.push({ name: u.name });
-    const hasDebt = balance < 0;
+
+    let amountDisplay, statusLabelHTML, hasDebt = balance < 0;
+
+    if (balance < 0) {
+      amountDisplay = `−${format(Math.abs(balance))}`;
+      statusLabelHTML = '<span class="balance-label manual-debt">🔴 بدهکار دستی</span>';
+      debtors.push({ name: u.name, amount: Math.abs(balance) });
+    } else if (balance > 0) {
+      amountDisplay = `+${format(balance)}`;
+      statusLabelHTML = '<span class="balance-label credit">🟢 بستانکار</span>';
+      creditors.push({ name: u.name, amount: balance });
+    } else {
+      amountDisplay = toFa('۰');
+      statusLabelHTML = '<span class="balance-label settled">✅ تسویه</span>';
+      settled.push({ name: u.name });
+    }
+
     const checkSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
     let checkHTML, statusHTML;
     if (hasDebt) {
@@ -1072,22 +1242,15 @@ function renderReport() {
           ${isPaid ? '✔ پرداخت شده' : 'در انتظار پرداخت'}
         </span>`;
     }
-    let balanceCell;
-    if (balance > 0) {
-      balanceCell = `+${format(balance)}<br><span class="balance-label credit">🟢 بستانکار</span>`;
-    } else if (balance < 0) {
-      balanceCell = `−${format(Math.abs(balance))}<br><span class="balance-label debt">🔴 بدهکار</span>`;
-    } else {
-      balanceCell = `${toFa('۰')}<br><span class="balance-label settled">✅ تسویه</span>`;
-    }
+
     rows += `<tr>
       <td style="font-weight:800;">${esc(u.name)}</td>
-      <td>${toFa(u.residents)}</td>
-      <td class="amount" style="color:var(--danger);">−${format(totalShare)}</td>
-      <td class="amount ${balanceClass(balance)}" style="font-weight:800;">${balanceCell}</td>
+      <td class="amount ${balanceClass(balance)}" style="font-weight:800;">${amountDisplay}</td>
+      <td>${statusLabelHTML}</td>
       <td>${checkHTML}${statusHTML}</td>
     </tr>`;
   });
+
   let summaryHTML = `<div class="balance-summary"><div class="title-sm">📊 خلاصه وضعیت مالی واحدها</div>`;
   if (debtors.length > 0) {
     summaryHTML += `<div class="s-item debtor"><span class="icon">🔴</span><strong>بدهکاران (${toFa(debtors.length)} واحد):</strong>
@@ -1102,6 +1265,7 @@ function renderReport() {
       <span class="units-list">${settled.map(s => `<span class="u-item">${esc(s.name)}</span>`).join('')}</span></div>`;
   }
   summaryHTML += `</div>`;
+
   const balCls = fundData.balance >= 0 ? '' : 'negative';
   const fundReportBox = `
     <div class="fund-report-box">
@@ -1113,27 +1277,32 @@ function renderReport() {
         <div class="fund-item balance ${balCls}"><div class="lbl">موجودی فعلی (تومان)</div><div class="val">${format(fundData.balance)}</div></div>
       </div>
     </div>`;
+
   const cardBoxHTML = (cardInfo.number || cardInfo.holder) ? `
     <div class="payment-info-box">
       <div class="title">💳 شماره کارت جهت واریز هزینه‌ها</div>
       ${cardInfo.number ? `<div class="card-number">${esc(cardInfo.number)}</div>` : ''}
       ${cardInfo.holder ? `<div class="holder">به نام: <span>${esc(cardInfo.holder)}</span></div>` : ''}
     </div>` : '';
-  const sumBalanceDisplay = sumBalance > 0 ? `+${format(sumBalance)} (بستانکار)` 
-    : sumBalance < 0 ? `−${format(Math.abs(sumBalance))} (بدهکار)` : `${toFa('۰')}`;
+
+  const sumBalanceDisplay = sumBalance > 0 ? `+${format(sumBalance)}`
+    : sumBalance < 0 ? `−${format(Math.abs(sumBalance))}` : toFa('۰');
+
   reportArea.innerHTML = `
     <div class="table-wrap">
       <table class="report-table">
         <thead><tr>
-          <th>واحد</th><th>نفرات</th><th>مبلغ سهم (تومان)</th><th>مانده (تومان)</th><th>وضعیت پرداخت</th>
+          <th>واحد</th>
+          <th>مانده (تومان)</th>
+          <th>وضعیت</th>
+          <th>پرداخت</th>
         </tr></thead>
         <tbody>
           ${rows}
           <tr class="total-row">
-            <td colspan="2">جمع کل</td>
-            <td class="amount">−${format(sumShare)}</td>
+            <td>جمع کل</td>
             <td class="amount">${sumBalanceDisplay}</td>
-            <td>${toFa(paidCount)} از ${toFa(units.length)} واحد</td>
+            <td colspan="2">${toFa(paidCount)} از ${toFa(units.length)} واحد پرداخت شده</td>
           </tr>
         </tbody>
       </table>
@@ -1182,4 +1351,4 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
 </script>
 
 </body>
-  </html>
+</html>
