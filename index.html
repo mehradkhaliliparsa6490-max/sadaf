@@ -485,10 +485,6 @@ function attachPersianNumeric(id) {
 /* ================= قانون ۱۰ روزه — بر اساس تاریخ خود قبض ================= */
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/**
- * تاریخ قبض (رشته YYYY-MM-DD میلادی از input type=date) را به Date نیمه‌شب محلی تبدیل می‌کند.
- * اگر تاریخ خالی یا نامعتبر باشد null برمی‌گرداند.
- */
 function getBillDateAtMidnight(b) {
   if (!b || !b.date) return null;
   const parts = String(b.date).split('-');
@@ -502,11 +498,6 @@ function getBillDateAtMidnight(b) {
   dt.setHours(0, 0, 0, 0);
   return dt;
 }
-
-/**
- * تعداد روزهای سپری‌شده از تاریخ قبض تا امروز.
- * اگر تاریخ نامشخص باشد null. اگر تاریخ در آینده باشد عدد منفی.
- */
 function billDaysSince(b) {
   const billDate = getBillDateAtMidnight(b);
   if (!billDate) return null;
@@ -515,23 +506,11 @@ function billDaysSince(b) {
   const diffMs = today.getTime() - billDate.getTime();
   return Math.round(diffMs / DAY_MS);
 }
-
-/**
- * آیا قبض در بازه ۱۰ روز اخیر (بر اساس تاریخ خود قبض) قرار دارد؟
- * - تاریخ نامشخص → true (محافظه‌کارانه در گزارش نشان داده می‌شود)
- * - تاریخ در آینده → true
- * - 0 تا 9 روز گذشته → true
- * - 10 روز یا بیشتر → false
- */
 function isBillRecent(b) {
   const days = billDaysSince(b);
   if (days === null) return true;
   return days < 10;
 }
-
-/**
- * بج وضعیت قبض بر اساس تاریخ خود قبض.
- */
 function billStatusBadge(b) {
   const days = billDaysSince(b);
   if (days === null) {
@@ -546,7 +525,6 @@ function billStatusBadge(b) {
   }
   return `<span class="badge badge-old" title="در گزارش اهالی نمایش داده نمی‌شود">📦 ${toFa(days)} روز گذشته</span>`;
 }
-
 function getFilteredBills() {
   if (billFilter === 'recent') return bills.filter(isBillRecent);
   if (billFilter === 'old') return bills.filter(b => !isBillRecent(b));
@@ -845,7 +823,6 @@ function saveBill(editId) {
   if (editId) {
     const idx = bills.findIndex(b => b.id === editId);
     if (idx !== -1) {
-      // createdAt و id حفظ می‌شوند
       bills[idx] = { ...bills[idx], ...billData };
     }
   } else {
@@ -1027,7 +1004,6 @@ function render() {
       <td><button class="btn btn-danger btn-sm" onclick="removeUnit(${u.id})">حذف</button></td>
     </tr>`).join('') : `<tr><td colspan="5" class="empty">هنوز واحدی اضافه نشده است</td></tr>`) + `</tbody>`;
 
-  /* ============ فیلتر بازه زمانی قبض‌ها (بر اساس تاریخ خود قبض) ============ */
   const recentCount = bills.filter(isBillRecent).length;
   const oldCount = bills.length - recentCount;
   const filterBar = document.getElementById('billFilterBar');
@@ -1140,7 +1116,7 @@ function render() {
   renderReport();
 }
 
-/* ================ گزارش اهالی — هوشمند، بر اساس تاریخ خود قبض ================ */
+/* ================ گزارش اهالی ================ */
 function renderReport() {
   document.getElementById('reportDate').textContent = todayFa();
   document.getElementById('reportUnitsCount').textContent = toFa(units.length);
@@ -1153,7 +1129,6 @@ function renderReport() {
   const oldTotal = oldBills.reduce((s, b) => s + b.amount, 0);
   const unknownDateCount = bills.filter(b => billDaysSince(b) === null).length;
 
-  // نمایش فقط قبض‌های ۱۰ روز اخیر (بر اساس تاریخ خود قبض)
   if (recentBills.length === 0) {
     billInfoBox.innerHTML = `
       <h3>📋 هزینه‌های اخیر (۱۰ روز گذشته)</h3>
@@ -1213,7 +1188,8 @@ function renderReport() {
 
     if (balance < 0) {
       amountDisplay = `−${format(Math.abs(balance))}`;
-      statusLabelHTML = '<span class="balance-label manual-debt">🔴 بدهکار دستی</span>';
+      // تغییر: عبارت «بدهکار دستی» → «پرداخت نشده»
+      statusLabelHTML = '<span class="balance-label manual-debt">🔴 پرداخت نشده</span>';
       debtors.push({ name: u.name, amount: Math.abs(balance) });
     } else if (balance > 0) {
       amountDisplay = `+${format(balance)}`;
