@@ -201,10 +201,93 @@
   .calc-badge .del-x:hover { background:#dc2626; color:#fff; }
   .calc-empty { font-size:11px; color:var(--muted); font-weight:500; }
 
+  /* ===== نوار ناوبری سریع (Sticky Quick-Nav) ===== */
+  .quick-nav {
+    position: sticky;
+    top: 8px;
+    z-index: 50;
+    display: flex;
+    gap: 6px;
+    background: rgba(255,255,255,.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 14px rgba(15,23,42,.08);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .quick-nav::-webkit-scrollbar { height: 4px; }
+  .quick-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .quick-nav::-webkit-scrollbar-track { background: transparent; }
+
+  .qn-btn {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 7px 12px;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    border-radius: 9px;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--text);
+    transition: all .18s ease;
+    min-width: 68px;
+    position: relative;
+    touch-action: manipulation;
+  }
+  .qn-btn:hover, .qn-btn:focus-visible {
+    border-color: var(--primary);
+    background: var(--primary-lighter);
+    color: var(--primary-dark);
+    outline: none;
+    transform: translateY(-1px);
+  }
+  .qn-btn:active { transform: scale(.96); }
+  .qn-btn.active {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-color: var(--primary-dark);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb),.35);
+  }
+  .qn-icon { font-size: 17px; line-height: 1; }
+  .qn-label { font-size: 11px; font-weight: 700; line-height: 1.2; }
+  .qn-key {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 9px;
+    font-weight: 800;
+    opacity: .55;
+    background: rgba(0,0,0,.06);
+    border-radius: 4px;
+    padding: 0 3px;
+    line-height: 1.4;
+  }
+  .qn-btn.active .qn-key { background: rgba(255,255,255,.25); opacity: .95; }
+
+  /* فاصله‌ی سکشن‌ها تا نوار چسبیده */
+  section.card { scroll-margin-top: 90px; }
+
+  @media (max-width:480px) {
+    .qn-btn { min-width: 60px; padding: 6px 9px; }
+    .qn-label { font-size: 10px; }
+    .qn-icon { font-size: 15px; }
+  }
+
   @media print {
     @page { size: A4 portrait; margin: 4mm; }
     html, body { background:#fff!important; padding:0!important; margin:0!important; width:100%; height:100%; overflow:hidden!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     .no-print { display:none!important; }
+    .quick-nav { display:none!important; }
     .container { max-width:100%!important; padding:0!important; margin:0!important; }
     #reportPage { display:block!important; }
     #managePage { display:none!important; }
@@ -275,6 +358,40 @@
       </div>
     </header>
 
+    <!-- ===== نوار ناوبری سریع ===== -->
+    <nav class="quick-nav no-print" id="quickNav" aria-label="میانبر بخش‌ها">
+      <button type="button" class="qn-btn" onclick="scrollToSection('sec-units')" data-target="sec-units" title="واحدهای ساختمان (Shift+Alt+۱)">
+        <span class="qn-key">۱</span>
+        <span class="qn-icon">🏠</span>
+        <span class="qn-label">واحدها</span>
+      </button>
+      <button type="button" class="qn-btn" onclick="scrollToSection('sec-bills')" data-target="sec-bills" title="قبض‌ها و هزینه‌ها (Shift+Alt+۲)">
+        <span class="qn-key">۲</span>
+        <span class="qn-icon">📋</span>
+        <span class="qn-label">قبض‌ها</span>
+      </button>
+      <button type="button" class="qn-btn" onclick="scrollToSection('sec-payments')" data-target="sec-payments" title="ثبت پرداخت‌ها (Shift+Alt+۳)">
+        <span class="qn-key">۳</span>
+        <span class="qn-icon">💵</span>
+        <span class="qn-label">پرداخت‌ها</span>
+      </button>
+      <button type="button" class="qn-btn" onclick="scrollToSection('sec-adjustments')" data-target="sec-adjustments" title="تعدیلات و محاسبات هوشمند (Shift+Alt+۴)">
+        <span class="qn-key">۴</span>
+        <span class="qn-icon">🧮</span>
+        <span class="qn-label">تعدیلات</span>
+      </button>
+      <button type="button" class="qn-btn" onclick="scrollToSection('sec-card')" data-target="sec-card" title="اطلاعات کارت (Shift+Alt+۵)">
+        <span class="qn-key">۵</span>
+        <span class="qn-icon">💳</span>
+        <span class="qn-label">کارت</span>
+      </button>
+      <button type="button" class="qn-btn" onclick="scrollToSection('sec-backup')" data-target="sec-backup" title="پشتیبان‌گیری و بازیابی (Shift+Alt+۶)">
+        <span class="qn-key">۶</span>
+        <span class="qn-icon">💾</span>
+        <span class="qn-label">پشتیبان</span>
+      </button>
+    </nav>
+
     <section class="card">
       <h2><span class="num">۰</span> خلاصه وضعیت ساختمان</h2>
       <div class="stats-grid" id="statsGrid"></div>
@@ -287,7 +404,7 @@
       <div id="fundStatusMsg"></div>
     </section>
 
-    <section class="card">
+    <section class="card" id="sec-units">
       <h2><span class="num">۱</span> واحدهای ساختمان</h2>
       <div class="form-row">
         <input id="unitName" placeholder="نام واحد (مثلاً واحد ۱)">
@@ -299,7 +416,7 @@
       <div class="table-wrap"><table id="unitsTable"></table></div>
     </section>
 
-    <section class="card">
+    <section class="card" id="sec-bills">
       <h2><span class="num">۲</span> قبض‌ها و هزینه‌ها</h2>
       <button class="btn" onclick="openBillModal()" style="margin-bottom:10px;">➕ افزودن قبض جدید</button>
       <div class="bill-info-banner">
@@ -309,7 +426,7 @@
       <div class="table-wrap"><table id="billsTable"></table></div>
     </section>
 
-    <section class="card">
+    <section class="card" id="sec-payments">
       <h2><span class="num">۳</span> ثبت پرداخت واحدها</h2>
       <div class="form-row">
         <select id="paymentUnit" style="flex:1;min-width:140px;"></select>
@@ -336,7 +453,7 @@
       <div class="table-wrap"><table id="paymentsTable"></table></div>
     </section>
 
-    <section class="card">
+    <section class="card" id="sec-adjustments">
       <h2><span class="num">۴</span> تعدیلات و محاسبات هوشمند واحدها</h2>
       <p class="hint" style="margin-top:0;">
         🧮 محاسبه‌ی هر واحد: <strong>پرداختی (+)</strong> ، <strong>سهم و بدهی‌ها (−)</strong>.
@@ -357,7 +474,7 @@
       <div class="table-wrap"><table id="adjustmentsTable" class="calc-table"></table></div>
     </section>
 
-    <section class="card">
+    <section class="card" id="sec-card">
       <h2><span class="num">۵</span> اطلاعات کارت جهت پرداخت اهالی</h2>
       <div class="form-row">
         <input id="cardNumber" type="text" inputmode="numeric" placeholder="شماره کارت (۱۶ رقم)" style="min-width:200px;" maxlength="19">
@@ -366,7 +483,7 @@
       </div>
     </section>
 
-    <section class="card">
+    <section class="card" id="sec-backup">
       <h2><span class="num">۶</span> پشتیبان‌گیری و بازیابی</h2>
       <div class="form-row" style="margin-top:0;">
         <button class="btn" onclick="backupData()">📥 دانلود پشتیبان</button>
@@ -408,6 +525,67 @@
 <button id="scrollTopBtn" onclick="scrollToTop()" title="بازگشت به بالا">⬆</button>
 
 <script>
+/* ================= ناوبری سریع ================= */
+const QUICK_NAV_IDS = ['sec-units','sec-bills','sec-payments','sec-adjustments','sec-card','sec-backup'];
+
+function scrollToSection(sectionId) {
+  const el = document.getElementById(sectionId);
+  if (!el) return;
+  const nav = document.getElementById('quickNav');
+  const navH = nav ? nav.offsetHeight : 70;
+  const rect = el.getBoundingClientRect();
+  const targetY = window.scrollY + rect.top - navH - 16;
+  window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+  // هایلایت فوری
+  document.querySelectorAll('.qn-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.target === sectionId);
+  });
+}
+
+// هایلایت خودکار بر اساس موقعیت اسکرول
+function updateQuickNavActive() {
+  const nav = document.getElementById('quickNav');
+  if (!nav) return;
+  const navH = nav.offsetHeight;
+  const threshold = navH + 80;
+  let currentId = null;
+  for (const id of QUICK_NAV_IDS) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    const top = el.getBoundingClientRect().top;
+    if (top - threshold <= 0) currentId = id;
+  }
+  document.querySelectorAll('.qn-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.target === currentId);
+  });
+}
+
+window.addEventListener('scroll', () => {
+  updateQuickNavActive();
+  const b = document.getElementById('scrollTopBtn');
+  if (window.scrollY > 300) b.classList.add('show'); else b.classList.remove('show');
+}, { passive: true });
+
+// کلیدهای میانبر: Shift + Alt + ۱ تا ۶ (و 1..6 روی کیبورد لاتین)
+document.addEventListener('keydown', (e) => {
+  if (!e.shiftKey || !e.altKey) return;
+  const tag = (e.target && e.target.tagName || '').toLowerCase();
+  if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+  const map = {
+    'Digit1': 'sec-units',      'Numpad1': 'sec-units',
+    'Digit2': 'sec-bills',      'Numpad2': 'sec-bills',
+    'Digit3': 'sec-payments',   'Numpad3': 'sec-payments',
+    'Digit4': 'sec-adjustments','Numpad4': 'sec-adjustments',
+    'Digit5': 'sec-card',       'Numpad5': 'sec-card',
+    'Digit6': 'sec-backup',     'Numpad6': 'sec-backup'
+  };
+  const id = map[e.code];
+  if (id) {
+    e.preventDefault();
+    scrollToSection(id);
+  }
+});
+
 /* ================= ذخیره‌سازی ================= */
 const STORAGE_KEYS = {
   units:'bm_v2_units', bills:'bm_v2_bills', payments:'bm_v2_payments',
@@ -613,10 +791,6 @@ function hideReport() {
   document.getElementById('managePage').style.display = 'block';
   setTimeout(scrollToTop, 20);
 }
-window.addEventListener('scroll', () => {
-  const b = document.getElementById('scrollTopBtn');
-  if (window.scrollY > 300) b.classList.add('show'); else b.classList.remove('show');
-}, { passive: true });
 function addUnit() {
   const name = document.getElementById('unitName').value.trim();
   const residents = Number(toEn(document.getElementById('unitResidents').value)) || 0;
@@ -1188,7 +1362,6 @@ function renderReport() {
 
     if (balance < 0) {
       amountDisplay = `−${format(Math.abs(balance))}`;
-      // تغییر: عبارت «بدهکار دستی» → «پرداخت نشده»
       statusLabelHTML = '<span class="balance-label manual-debt">🔴 پرداخت نشده</span>';
       debtors.push({ name: u.name, amount: Math.abs(balance) });
     } else if (balance > 0) {
@@ -1302,6 +1475,7 @@ window.onload = () => {
   selectPayType('regular');
   syncPaidStatus();
   render();
+  updateQuickNavActive();
 };
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
   setTimeout(() => {
@@ -1311,6 +1485,7 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
     selectPayType('regular');
     syncPaidStatus();
     render();
+    updateQuickNavActive();
   }, 50);
 }
 </script>
