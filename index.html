@@ -201,14 +201,15 @@
   .calc-badge .del-x:hover { background:#dc2626; color:#fff; }
   .calc-empty { font-size:11px; color:var(--muted); font-weight:500; }
 
-  /* ===== نوار ناوبری سریع (Sticky Quick-Nav) ===== */
+  /* ===== نوار ناوبری سریع (Sticky Quick-Nav) - هوشمند، بدون سرریز افقی ===== */
   .quick-nav {
     position: sticky;
     top: 8px;
     z-index: 50;
     display: flex;
-    gap: 6px;
-    background: rgba(255,255,255,.95);
+    flex-wrap: wrap;
+    gap: 5px;
+    background: rgba(255,255,255,.96);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--border);
@@ -216,23 +217,20 @@
     padding: 8px;
     margin-bottom: 14px;
     box-shadow: 0 4px 14px rgba(15,23,42,.08);
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
+    max-width: 100%;
+    overflow: hidden; /* هیچ سرریز افقی */
   }
-  .quick-nav::-webkit-scrollbar { height: 4px; }
-  .quick-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-  .quick-nav::-webkit-scrollbar-track { background: transparent; }
 
   .qn-btn {
-    flex: 0 0 auto;
+    flex: 1 1 0;
+    min-width: 60px;
+    max-width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 3px;
-    padding: 7px 12px;
+    padding: 7px 8px;
     border: 1.5px solid var(--border);
     background: #fff;
     border-radius: 9px;
@@ -240,9 +238,9 @@
     font-family: inherit;
     color: var(--text);
     transition: all .18s ease;
-    min-width: 68px;
     position: relative;
     touch-action: manipulation;
+    box-sizing: border-box;
   }
   .qn-btn:hover, .qn-btn:focus-visible {
     border-color: var(--primary);
@@ -259,7 +257,7 @@
     box-shadow: 0 4px 12px rgba(var(--primary-rgb),.35);
   }
   .qn-icon { font-size: 17px; line-height: 1; }
-  .qn-label { font-size: 11px; font-weight: 700; line-height: 1.2; }
+  .qn-label { font-size: 11px; font-weight: 700; line-height: 1.2; text-align: center; word-break: break-word; }
   .qn-key {
     position: absolute;
     top: 2px;
@@ -274,13 +272,25 @@
   }
   .qn-btn.active .qn-key { background: rgba(255,255,255,.25); opacity: .95; }
 
-  /* فاصله‌ی سکشن‌ها تا نوار چسبیده */
-  section.card { scroll-margin-top: 90px; }
-  #billInfoBox, #rep-table, #rep-summary, #rep-fund, #rep-card, #rep-header { scroll-margin-top: 90px; }
+  /* دکمه گزارش اهالی - رنگ سبز متمایز */
+  .qn-btn.report-btn {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    border-color: #15803d;
+    color: #fff;
+  }
+  .qn-btn.report-btn:hover, .qn-btn.report-btn:focus-visible {
+    background: linear-gradient(135deg, #15803d, #166534);
+    border-color: #166534;
+    color: #fff;
+  }
+  .qn-btn.report-btn .qn-key { background: rgba(255,255,255,.25); opacity: .95; }
 
-  @media (max-width:480px) {
-    .qn-btn { min-width: 60px; padding: 6px 9px; }
-    .qn-label { font-size: 10px; }
+  /* فاصله‌ی سکشن‌ها تا نوار چسبیده */
+  section.card { scroll-margin-top: 100px; }
+
+  @media (max-width: 480px) {
+    .qn-btn { min-width: 52px; padding: 6px 6px; }
+    .qn-label { font-size: 9.5px; }
     .qn-icon { font-size: 15px; }
   }
 
@@ -355,12 +365,11 @@
           <div class="theme-dot red" data-theme="red" title="قرمز"></div>
           <div class="theme-dot yellow" data-theme="yellow" title="زرد"></div>
         </div>
-        <button onclick="showReport()">📄 گزارش اهالی</button>
       </div>
     </header>
 
-    <!-- ===== نوار ناوبری سریع مدیریت ===== -->
-    <nav class="quick-nav no-print" id="quickNav" aria-label="میانبر بخش‌های مدیریت">
+    <!-- ===== نوار ناوبری سریع صفحه اصلی ===== -->
+    <nav class="quick-nav no-print" id="quickNav" aria-label="میانبر بخش‌ها">
       <button type="button" class="qn-btn" onclick="scrollToSection('sec-units')" data-target="sec-units" title="واحدهای ساختمان (Shift+Alt+۱)">
         <span class="qn-key">۱</span>
         <span class="qn-icon">🏠</span>
@@ -390,6 +399,11 @@
         <span class="qn-key">۶</span>
         <span class="qn-icon">💾</span>
         <span class="qn-label">پشتیبان</span>
+      </button>
+      <button type="button" class="qn-btn report-btn" onclick="showReport()" title="گزارش اهالی (Shift+Alt+۰)">
+        <span class="qn-key">۰</span>
+        <span class="qn-icon">📄</span>
+        <span class="qn-label">گزارش اهالی</span>
       </button>
     </nav>
 
@@ -500,36 +514,6 @@
       <button class="btn btn-sm" style="background:#64748b;" onclick="hideReport()">⬅️ بازگشت</button>
       <button class="btn btn-sm" onclick="window.print()">🖨️ چاپ / PDF</button>
     </div>
-
-    <!-- ===== نوار ناوبری سریع گزارش اهالی ===== -->
-    <nav class="quick-nav no-print" id="quickNavReport" aria-label="میانبر بخش‌های گزارش">
-      <button type="button" class="qn-btn" onclick="scrollToSection('billInfoBox')" data-target="billInfoBox" title="هزینه‌ها (Shift+Alt+۱)">
-        <span class="qn-key">۱</span>
-        <span class="qn-icon">📋</span>
-        <span class="qn-label">هزینه‌ها</span>
-      </button>
-      <button type="button" class="qn-btn" onclick="scrollToSection('rep-table')" data-target="rep-table" title="جدول صورت‌حساب (Shift+Alt+۲)">
-        <span class="qn-key">۲</span>
-        <span class="qn-icon">📊</span>
-        <span class="qn-label">جدول</span>
-      </button>
-      <button type="button" class="qn-btn" onclick="scrollToSection('rep-summary')" data-target="rep-summary" title="خلاصه وضعیت (Shift+Alt+۳)">
-        <span class="qn-key">۳</span>
-        <span class="qn-icon">🧾</span>
-        <span class="qn-label">خلاصه</span>
-      </button>
-      <button type="button" class="qn-btn" onclick="scrollToSection('rep-fund')" data-target="rep-fund" title="صندوق ذخیره (Shift+Alt+۴)">
-        <span class="qn-key">۴</span>
-        <span class="qn-icon">💰</span>
-        <span class="qn-label">صندوق</span>
-      </button>
-      <button type="button" class="qn-btn" onclick="scrollToSection('rep-card')" data-target="rep-card" title="کارت و امضا (Shift+Alt+۵)">
-        <span class="qn-key">۵</span>
-        <span class="qn-icon">💳</span>
-        <span class="qn-label">کارت</span>
-      </button>
-    </nav>
-
     <div id="printSheet">
       <div class="report-header">
         <div class="logo-wrap">
@@ -558,7 +542,6 @@
 <script>
 /* ================= ناوبری سریع ================= */
 const QUICK_NAV_IDS = ['sec-units','sec-bills','sec-payments','sec-adjustments','sec-card','sec-backup'];
-const REPORT_NAV_IDS = ['billInfoBox','rep-table','rep-summary','rep-fund','rep-card'];
 
 function isReportVisible() {
   const rp = document.getElementById('reportPage');
@@ -568,37 +551,32 @@ function isReportVisible() {
 function scrollToSection(sectionId) {
   const el = document.getElementById(sectionId);
   if (!el) return;
-  const nav = isReportVisible()
-    ? document.getElementById('quickNavReport')
-    : document.getElementById('quickNav');
+  const nav = document.getElementById('quickNav');
   const navH = nav ? nav.offsetHeight : 70;
   const rect = el.getBoundingClientRect();
   const targetY = window.scrollY + rect.top - navH - 16;
   window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
   if (nav) {
-    nav.querySelectorAll('.qn-btn').forEach(b => {
+    nav.querySelectorAll('.qn-btn[data-target]').forEach(b => {
       b.classList.toggle('active', b.dataset.target === sectionId);
     });
   }
 }
 
 function updateQuickNavActive() {
-  const showRep = isReportVisible();
-  const navIds = showRep ? REPORT_NAV_IDS : QUICK_NAV_IDS;
-  const navEl = showRep
-    ? document.getElementById('quickNavReport')
-    : document.getElementById('quickNav');
-  if (!navEl) return;
-  const navH = navEl.offsetHeight;
+  // نوار میانبر فقط در صفحه اصلی وجود دارد
+  if (isReportVisible()) return;
+  const nav = document.getElementById('quickNav');
+  if (!nav) return;
+  const navH = nav.offsetHeight;
   const threshold = navH + 80;
   let currentId = null;
-  for (const id of navIds) {
+  for (const id of QUICK_NAV_IDS) {
     const el = document.getElementById(id);
     if (!el) continue;
-    const top = el.getBoundingClientRect().top;
-    if (top - threshold <= 0) currentId = id;
+    if (el.getBoundingClientRect().top - threshold <= 0) currentId = id;
   }
-  navEl.querySelectorAll('.qn-btn').forEach(b => {
+  nav.querySelectorAll('.qn-btn[data-target]').forEach(b => {
     b.classList.toggle('active', b.dataset.target === currentId);
   });
 }
@@ -611,30 +589,26 @@ window.addEventListener('scroll', () => {
   }
 }, { passive: true });
 
-// کلیدهای میانبر: Shift + Alt + اعداد
+// کلیدهای میانبر: Shift + Alt + اعداد (فقط در صفحه اصلی)
 document.addEventListener('keydown', (e) => {
   if (!e.shiftKey || !e.altKey) return;
   const tag = (e.target && e.target.tagName || '').toLowerCase();
   if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
-  const map = isReportVisible() ? {
-    'Digit1': 'billInfoBox', 'Numpad1': 'billInfoBox',
-    'Digit2': 'rep-table',   'Numpad2': 'rep-table',
-    'Digit3': 'rep-summary', 'Numpad3': 'rep-summary',
-    'Digit4': 'rep-fund',    'Numpad4': 'rep-fund',
-    'Digit5': 'rep-card',    'Numpad5': 'rep-card'
-  } : {
+  if (isReportVisible()) return; // میانبرها فقط در صفحه مدیریت فعال هستند
+  const map = {
     'Digit1': 'sec-units',      'Numpad1': 'sec-units',
     'Digit2': 'sec-bills',      'Numpad2': 'sec-bills',
     'Digit3': 'sec-payments',   'Numpad3': 'sec-payments',
     'Digit4': 'sec-adjustments','Numpad4': 'sec-adjustments',
     'Digit5': 'sec-card',       'Numpad5': 'sec-card',
-    'Digit6': 'sec-backup',     'Numpad6': 'sec-backup'
+    'Digit6': 'sec-backup',     'Numpad6': 'sec-backup',
+    'Digit0': 'report',         'Numpad0': 'report'
   };
   const id = map[e.code];
-  if (id) {
-    e.preventDefault();
-    scrollToSection(id);
-  }
+  if (!id) return;
+  e.preventDefault();
+  if (id === 'report') showReport();
+  else scrollToSection(id);
 });
 
 /* ================= ذخیره‌سازی ================= */
@@ -830,10 +804,7 @@ function showReport() {
   document.getElementById('reportPage').style.display = 'block';
   syncPaidStatus();
   render();
-  setTimeout(() => {
-    scrollToTop();
-    updateQuickNavActive();
-  }, 20);
+  setTimeout(scrollToTop, 20);
 }
 function hideReport() {
   document.getElementById('reportPage').style.display = 'none';
@@ -1048,9 +1019,7 @@ function saveBill(editId) {
   const billData = { name, type, date, amount, method, shares, fundSource };
   if (editId) {
     const idx = bills.findIndex(b => b.id === editId);
-    if (idx !== -1) {
-      bills[idx] = { ...bills[idx], ...billData };
-    }
+    if (idx !== -1) bills[idx] = { ...bills[idx], ...billData };
   } else {
     bills.push({ id: Date.now(), ...billData });
   }
@@ -1490,7 +1459,7 @@ function renderReport() {
     : sumBalance < 0 ? `−${format(Math.abs(sumBalance))}` : toFa('۰');
 
   reportArea.innerHTML = `
-    <div class="table-wrap" id="rep-table">
+    <div class="table-wrap">
       <table class="report-table">
         <thead><tr>
           <th>واحد</th>
@@ -1508,9 +1477,9 @@ function renderReport() {
         </tbody>
       </table>
     </div>
-    <div id="rep-summary">${summaryHTML}</div>
-    <div id="rep-fund">${fundReportBox}</div>
-    <div id="rep-card">${cardBoxHTML}</div>
+    ${summaryHTML}
+    ${fundReportBox}
+    ${cardBoxHTML}
     <div class="report-footer">
       این صورت‌حساب توسط مدیریت ${esc(buildingName)} تهیه شده است. در صورت مشاهده هرگونه مغایرت با مدیریت تماس حاصل فرمایید.
       <div class="sign">
