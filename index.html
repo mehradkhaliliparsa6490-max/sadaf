@@ -276,6 +276,7 @@
 
   /* فاصله‌ی سکشن‌ها تا نوار چسبیده */
   section.card { scroll-margin-top: 90px; }
+  #billInfoBox, #rep-table, #rep-summary, #rep-fund, #rep-card, #rep-header { scroll-margin-top: 90px; }
 
   @media (max-width:480px) {
     .qn-btn { min-width: 60px; padding: 6px 9px; }
@@ -358,8 +359,8 @@
       </div>
     </header>
 
-    <!-- ===== نوار ناوبری سریع ===== -->
-    <nav class="quick-nav no-print" id="quickNav" aria-label="میانبر بخش‌ها">
+    <!-- ===== نوار ناوبری سریع مدیریت ===== -->
+    <nav class="quick-nav no-print" id="quickNav" aria-label="میانبر بخش‌های مدیریت">
       <button type="button" class="qn-btn" onclick="scrollToSection('sec-units')" data-target="sec-units" title="واحدهای ساختمان (Shift+Alt+۱)">
         <span class="qn-key">۱</span>
         <span class="qn-icon">🏠</span>
@@ -375,7 +376,7 @@
         <span class="qn-icon">💵</span>
         <span class="qn-label">پرداخت‌ها</span>
       </button>
-      <button type="button" class="qn-btn" onclick="scrollToSection('sec-adjustments')" data-target="sec-adjustments" title="تعدیلات و محاسبات هوشمند (Shift+Alt+۴)">
+      <button type="button" class="qn-btn" onclick="scrollToSection('sec-adjustments')" data-target="sec-adjustments" title="تعدیلات و محاسبات (Shift+Alt+۴)">
         <span class="qn-key">۴</span>
         <span class="qn-icon">🧮</span>
         <span class="qn-label">تعدیلات</span>
@@ -385,7 +386,7 @@
         <span class="qn-icon">💳</span>
         <span class="qn-label">کارت</span>
       </button>
-      <button type="button" class="qn-btn" onclick="scrollToSection('sec-backup')" data-target="sec-backup" title="پشتیبان‌گیری و بازیابی (Shift+Alt+۶)">
+      <button type="button" class="qn-btn" onclick="scrollToSection('sec-backup')" data-target="sec-backup" title="پشتیبان‌گیری (Shift+Alt+۶)">
         <span class="qn-key">۶</span>
         <span class="qn-icon">💾</span>
         <span class="qn-label">پشتیبان</span>
@@ -499,6 +500,36 @@
       <button class="btn btn-sm" style="background:#64748b;" onclick="hideReport()">⬅️ بازگشت</button>
       <button class="btn btn-sm" onclick="window.print()">🖨️ چاپ / PDF</button>
     </div>
+
+    <!-- ===== نوار ناوبری سریع گزارش اهالی ===== -->
+    <nav class="quick-nav no-print" id="quickNavReport" aria-label="میانبر بخش‌های گزارش">
+      <button type="button" class="qn-btn" onclick="scrollToSection('billInfoBox')" data-target="billInfoBox" title="هزینه‌ها (Shift+Alt+۱)">
+        <span class="qn-key">۱</span>
+        <span class="qn-icon">📋</span>
+        <span class="qn-label">هزینه‌ها</span>
+      </button>
+      <button type="button" class="qn-btn" onclick="scrollToSection('rep-table')" data-target="rep-table" title="جدول صورت‌حساب (Shift+Alt+۲)">
+        <span class="qn-key">۲</span>
+        <span class="qn-icon">📊</span>
+        <span class="qn-label">جدول</span>
+      </button>
+      <button type="button" class="qn-btn" onclick="scrollToSection('rep-summary')" data-target="rep-summary" title="خلاصه وضعیت (Shift+Alt+۳)">
+        <span class="qn-key">۳</span>
+        <span class="qn-icon">🧾</span>
+        <span class="qn-label">خلاصه</span>
+      </button>
+      <button type="button" class="qn-btn" onclick="scrollToSection('rep-fund')" data-target="rep-fund" title="صندوق ذخیره (Shift+Alt+۴)">
+        <span class="qn-key">۴</span>
+        <span class="qn-icon">💰</span>
+        <span class="qn-label">صندوق</span>
+      </button>
+      <button type="button" class="qn-btn" onclick="scrollToSection('rep-card')" data-target="rep-card" title="کارت و امضا (Shift+Alt+۵)">
+        <span class="qn-key">۵</span>
+        <span class="qn-icon">💳</span>
+        <span class="qn-label">کارت</span>
+      </button>
+    </nav>
+
     <div id="printSheet">
       <div class="report-header">
         <div class="logo-wrap">
@@ -527,35 +558,47 @@
 <script>
 /* ================= ناوبری سریع ================= */
 const QUICK_NAV_IDS = ['sec-units','sec-bills','sec-payments','sec-adjustments','sec-card','sec-backup'];
+const REPORT_NAV_IDS = ['billInfoBox','rep-table','rep-summary','rep-fund','rep-card'];
+
+function isReportVisible() {
+  const rp = document.getElementById('reportPage');
+  return rp && window.getComputedStyle(rp).display !== 'none';
+}
 
 function scrollToSection(sectionId) {
   const el = document.getElementById(sectionId);
   if (!el) return;
-  const nav = document.getElementById('quickNav');
+  const nav = isReportVisible()
+    ? document.getElementById('quickNavReport')
+    : document.getElementById('quickNav');
   const navH = nav ? nav.offsetHeight : 70;
   const rect = el.getBoundingClientRect();
   const targetY = window.scrollY + rect.top - navH - 16;
   window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
-  // هایلایت فوری
-  document.querySelectorAll('.qn-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.target === sectionId);
-  });
+  if (nav) {
+    nav.querySelectorAll('.qn-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.target === sectionId);
+    });
+  }
 }
 
-// هایلایت خودکار بر اساس موقعیت اسکرول
 function updateQuickNavActive() {
-  const nav = document.getElementById('quickNav');
-  if (!nav) return;
-  const navH = nav.offsetHeight;
+  const showRep = isReportVisible();
+  const navIds = showRep ? REPORT_NAV_IDS : QUICK_NAV_IDS;
+  const navEl = showRep
+    ? document.getElementById('quickNavReport')
+    : document.getElementById('quickNav');
+  if (!navEl) return;
+  const navH = navEl.offsetHeight;
   const threshold = navH + 80;
   let currentId = null;
-  for (const id of QUICK_NAV_IDS) {
+  for (const id of navIds) {
     const el = document.getElementById(id);
     if (!el) continue;
     const top = el.getBoundingClientRect().top;
     if (top - threshold <= 0) currentId = id;
   }
-  document.querySelectorAll('.qn-btn').forEach(b => {
+  navEl.querySelectorAll('.qn-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.target === currentId);
   });
 }
@@ -563,15 +606,23 @@ function updateQuickNavActive() {
 window.addEventListener('scroll', () => {
   updateQuickNavActive();
   const b = document.getElementById('scrollTopBtn');
-  if (window.scrollY > 300) b.classList.add('show'); else b.classList.remove('show');
+  if (b) {
+    if (window.scrollY > 300) b.classList.add('show'); else b.classList.remove('show');
+  }
 }, { passive: true });
 
-// کلیدهای میانبر: Shift + Alt + ۱ تا ۶ (و 1..6 روی کیبورد لاتین)
+// کلیدهای میانبر: Shift + Alt + اعداد
 document.addEventListener('keydown', (e) => {
   if (!e.shiftKey || !e.altKey) return;
   const tag = (e.target && e.target.tagName || '').toLowerCase();
   if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
-  const map = {
+  const map = isReportVisible() ? {
+    'Digit1': 'billInfoBox', 'Numpad1': 'billInfoBox',
+    'Digit2': 'rep-table',   'Numpad2': 'rep-table',
+    'Digit3': 'rep-summary', 'Numpad3': 'rep-summary',
+    'Digit4': 'rep-fund',    'Numpad4': 'rep-fund',
+    'Digit5': 'rep-card',    'Numpad5': 'rep-card'
+  } : {
     'Digit1': 'sec-units',      'Numpad1': 'sec-units',
     'Digit2': 'sec-bills',      'Numpad2': 'sec-bills',
     'Digit3': 'sec-payments',   'Numpad3': 'sec-payments',
@@ -618,7 +669,7 @@ let buildingName = load(STORAGE_KEYS.buildingName, 'ساختمان صدف');
 let cardInfo = load(STORAGE_KEYS.cardInfo, { number: '', holder: '' });
 let currentTheme = load(STORAGE_KEYS.theme, 'blue');
 let adjustments = load(STORAGE_KEYS.adjustments, {});
-let billFilter = 'all'; // 'all' | 'recent' | 'old'
+let billFilter = 'all';
 
 function save() {
   localStorage.setItem(STORAGE_KEYS.units, JSON.stringify(units));
@@ -743,11 +794,6 @@ function balanceClass(b) {
   if (b > 0) return 'balance-credit';
   return 'balance-settled';
 }
-function balanceLabel(b) {
-  if (b < 0) return '<span class="balance-label debt">🔴 بدهکار</span>';
-  if (b > 0) return '<span class="balance-label credit">🟢 بستانکار</span>';
-  return '<span class="balance-label settled">✅ تسویه</span>';
-}
 function syncPaidStatus() {
   let changed = false;
   units.forEach(u => {
@@ -784,12 +830,18 @@ function showReport() {
   document.getElementById('reportPage').style.display = 'block';
   syncPaidStatus();
   render();
-  setTimeout(scrollToTop, 20);
+  setTimeout(() => {
+    scrollToTop();
+    updateQuickNavActive();
+  }, 20);
 }
 function hideReport() {
   document.getElementById('reportPage').style.display = 'none';
   document.getElementById('managePage').style.display = 'block';
-  setTimeout(scrollToTop, 20);
+  setTimeout(() => {
+    scrollToTop();
+    updateQuickNavActive();
+  }, 20);
 }
 function addUnit() {
   const name = document.getElementById('unitName').value.trim();
@@ -1438,7 +1490,7 @@ function renderReport() {
     : sumBalance < 0 ? `−${format(Math.abs(sumBalance))}` : toFa('۰');
 
   reportArea.innerHTML = `
-    <div class="table-wrap">
+    <div class="table-wrap" id="rep-table">
       <table class="report-table">
         <thead><tr>
           <th>واحد</th>
@@ -1456,9 +1508,9 @@ function renderReport() {
         </tbody>
       </table>
     </div>
-    ${summaryHTML}
-    ${fundReportBox}
-    ${cardBoxHTML}
+    <div id="rep-summary">${summaryHTML}</div>
+    <div id="rep-fund">${fundReportBox}</div>
+    <div id="rep-card">${cardBoxHTML}</div>
     <div class="report-footer">
       این صورت‌حساب توسط مدیریت ${esc(buildingName)} تهیه شده است. در صورت مشاهده هرگونه مغایرت با مدیریت تماس حاصل فرمایید.
       <div class="sign">
