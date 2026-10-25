@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <title>مدیریت هزینه‌های ساختمان</title>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-<!-- ===== PWA ===== -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2563eb">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -16,7 +14,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <style>
-  :root { --primary:#2563eb; --primary-dark:#1d4ed8; --primary-light:#dbeafe; --primary-lighter:#eff6ff; --primary-rgb:37,99,235; --success:#16a34a; --danger:#dc2626; --warning:#f59e0b; --bg:#f1f5f9; --card:#fff; --border:#e2e8f0; --text:#1e293b; --muted:#64748b; --print-scale:1; }
+  :root { --primary:#2563eb; --primary-dark:#1d4ed8; --primary-light:#dbeafe; --primary-lighter:#eff6ff; --primary-rgb:37,99,235; --success:#16a34a; --danger:#dc2626; --warning:#f59e0b; --purple:#7c3aed; --bg:#f1f5f9; --card:#fff; --border:#e2e8f0; --text:#1e293b; --muted:#64748b; --print-scale:1; }
   [data-theme="green"] { --primary:#16a34a; --primary-dark:#15803d; --primary-light:#dcfce7; --primary-lighter:#f0fdf4; --primary-rgb:22,163,74; }
   [data-theme="red"] { --primary:#dc2626; --primary-dark:#b91c1c; --primary-light:#fee2e2; --primary-lighter:#fef2f2; --primary-rgb:220,38,38; }
   [data-theme="yellow"] { --primary:#d97706; --primary-dark:#b45309; --primary-light:#fef3c7; --primary-lighter:#fffbeb; --primary-rgb:217,119,6; }
@@ -114,7 +112,7 @@
   .pay-type-opt .pt-icon { font-size:20px; }
   .pay-type-opt .pt-text { font-size:12.5px; line-height:1.3; }
   .pay-type-opt .pt-text small { display:block; color:var(--muted); font-size:10.5px; font-weight:500; margin-top:2px; }
-  #reportPage { display:none; }
+  #reportPage, #periodReportPage { display:none; }
   #printSheet { background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 4px 16px rgba(15,23,42,.08); }
   .report-header { background:linear-gradient(135deg,#0f172a 0%,var(--primary-dark) 35%,var(--primary) 100%); color:#fff; padding:26px 20px; text-align:center; position:relative; overflow:hidden; }
   .report-header::before { content:''; position:absolute; top:-50%; left:-20%; width:70%; height:200%; background:radial-gradient(circle,rgba(255,255,255,.12),transparent 60%); pointer-events:none; }
@@ -201,136 +199,152 @@
   .calc-badge .del-x:hover { background:#dc2626; color:#fff; }
   .calc-empty { font-size:11px; color:var(--muted); font-weight:500; }
 
-  /* ===== نوار ناوبری سریع (Sticky Quick-Nav) - هوشمند، بدون سرریز افقی ===== */
-  .quick-nav {
-    position: sticky;
-    top: 8px;
-    z-index: 50;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    background: rgba(255,255,255,.96);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 8px;
-    margin-bottom: 14px;
-    box-shadow: 0 4px 14px rgba(15,23,42,.08);
-    max-width: 100%;
-    overflow: hidden; /* هیچ سرریز افقی */
-  }
-
-  .qn-btn {
-    flex: 1 1 0;
-    min-width: 60px;
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    padding: 7px 8px;
-    border: 1.5px solid var(--border);
-    background: #fff;
-    border-radius: 9px;
-    cursor: pointer;
-    font-family: inherit;
-    color: var(--text);
-    transition: all .18s ease;
-    position: relative;
-    touch-action: manipulation;
-    box-sizing: border-box;
-  }
-  .qn-btn:hover, .qn-btn:focus-visible {
-    border-color: var(--primary);
-    background: var(--primary-lighter);
-    color: var(--primary-dark);
-    outline: none;
-    transform: translateY(-1px);
-  }
+  /* ===== نوار ناوبری سریع ===== */
+  .quick-nav { position: sticky; top: 8px; z-index: 50; display: flex; flex-wrap: wrap; gap: 5px; background: rgba(255,255,255,.96); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 12px; padding: 8px; margin-bottom: 14px; box-shadow: 0 4px 14px rgba(15,23,42,.08); max-width: 100%; overflow: hidden; }
+  .qn-btn { flex: 1 1 0; min-width: 60px; max-width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 7px 8px; border: 1.5px solid var(--border); background: #fff; border-radius: 9px; cursor: pointer; font-family: inherit; color: var(--text); transition: all .18s ease; position: relative; touch-action: manipulation; box-sizing: border-box; }
+  .qn-btn:hover, .qn-btn:focus-visible { border-color: var(--primary); background: var(--primary-lighter); color: var(--primary-dark); outline: none; transform: translateY(-1px); }
   .qn-btn:active { transform: scale(.96); }
-  .qn-btn.active {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border-color: var(--primary-dark);
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(var(--primary-rgb),.35);
-  }
+  .qn-btn.active { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-color: var(--primary-dark); color: #fff; box-shadow: 0 4px 12px rgba(var(--primary-rgb),.35); }
   .qn-icon { font-size: 17px; line-height: 1; }
   .qn-label { font-size: 11px; font-weight: 700; line-height: 1.2; text-align: center; word-break: break-word; }
-  .qn-key {
-    position: absolute;
-    top: 2px;
-    left: 4px;
-    font-size: 9px;
-    font-weight: 800;
-    opacity: .55;
-    background: rgba(0,0,0,.06);
-    border-radius: 4px;
-    padding: 0 3px;
-    line-height: 1.4;
-  }
+  .qn-key { position: absolute; top: 2px; left: 4px; font-size: 9px; font-weight: 800; opacity: .55; background: rgba(0,0,0,.06); border-radius: 4px; padding: 0 3px; line-height: 1.4; }
   .qn-btn.active .qn-key { background: rgba(255,255,255,.25); opacity: .95; }
-
-  /* دکمه گزارش اهالی - رنگ سبز متمایز */
-  .qn-btn.report-btn {
-    background: linear-gradient(135deg, #16a34a, #15803d);
-    border-color: #15803d;
-    color: #fff;
-  }
-  .qn-btn.report-btn:hover, .qn-btn.report-btn:focus-visible {
-    background: linear-gradient(135deg, #15803d, #166534);
-    border-color: #166534;
-    color: #fff;
-  }
+  .qn-btn.report-btn { background: linear-gradient(135deg, #16a34a, #15803d); border-color: #15803d; color: #fff; }
+  .qn-btn.report-btn:hover, .qn-btn.report-btn:focus-visible { background: linear-gradient(135deg, #15803d, #166534); border-color: #166534; color: #fff; }
   .qn-btn.report-btn .qn-key { background: rgba(255,255,255,.25); opacity: .95; }
-
-  /* فاصله‌ی سکشن‌ها تا نوار چسبیده */
+  .qn-btn.period-btn { background: linear-gradient(135deg, #7c3aed, #6d28d9); border-color: #6d28d9; color: #fff; }
+  .qn-btn.period-btn:hover, .qn-btn.period-btn:focus-visible { background: linear-gradient(135deg, #6d28d9, #5b21b6); border-color: #5b21b6; color: #fff; }
+  .qn-btn.period-btn .qn-key { background: rgba(255,255,255,.25); opacity: .95; }
   section.card { scroll-margin-top: 100px; }
+  @media (max-width: 480px) { .qn-btn { min-width: 52px; padding: 6px 6px; } .qn-label { font-size: 9.5px; } .qn-icon { font-size: 15px; } }
 
-  @media (max-width: 480px) {
-    .qn-btn { min-width: 52px; padding: 6px 6px; }
-    .qn-label { font-size: 9.5px; }
-    .qn-icon { font-size: 15px; }
+  /* ===== Persian Date Picker ===== */
+  .pdp-overlay { position: fixed; inset: 0; background: rgba(15,23,42,.5); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 14px; }
+  .pdp-overlay.show { display: flex; }
+  .pdp-calendar { background: #fff; border-radius: 14px; padding: 14px; max-width: 340px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.3); animation: modalIn .2s ease; }
+  .pdp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .pdp-title { font-size: 15px; font-weight: 800; color: var(--primary-dark); }
+  .pdp-nav { background: var(--primary-lighter); color: var(--primary); border: 1px solid var(--primary-light); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+  .pdp-nav:hover { background: var(--primary-light); }
+  .pdp-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 5px; }
+  .pdp-weekdays span { text-align: center; font-size: 11px; font-weight: 800; color: var(--muted); padding: 4px 0; }
+  .pdp-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .pdp-day { text-align: center; padding: 8px 0; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all .15s; color: var(--text); }
+  .pdp-day:hover { background: var(--primary-lighter); color: var(--primary-dark); }
+  .pdp-day.empty { cursor: default; visibility: hidden; }
+  .pdp-day.today { border: 2px solid var(--primary); color: var(--primary-dark); font-weight: 800; }
+  .pdp-day.selected { background: var(--primary); color: #fff; font-weight: 800; border: 2px solid var(--primary); }
+  .pdp-actions { display: flex; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .pdp-actions button { flex: 1; padding: 8px; font-size: 12.5px; font-weight: 700; }
+  .pdp-date-input { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: left 10px center; padding-left: 32px !important; cursor: pointer; }
+
+  /* ===== Period Report ===== */
+  .period-report-wrap { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 4px 16px rgba(15,23,42,.08); }
+  .period-header { text-align: center; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 2px solid var(--border); }
+  .period-header h1 { margin: 0; font-size: 22px; color: var(--primary-dark); font-weight: 900; }
+  .period-header p { margin: 6px 0 0; color: var(--muted); font-size: 13px; font-weight: 600; }
+  .period-controls { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; justify-content: center; align-items: center; padding: 12px; background: #f8fafc; border-radius: 10px; border: 1px solid var(--border); }
+  .period-controls label { font-size: 12.5px; font-weight: 700; color: var(--muted); }
+  .period-controls select, .period-controls input { padding: 8px 12px; font-size: 13px; }
+  .period-controls .btn-generate { background: linear-gradient(135deg, #7c3aed, #6d28d9); padding: 9px 18px; font-weight: 700; box-shadow: 0 3px 10px rgba(124,58,237,.3); }
+  .period-controls .btn-generate:hover { background: linear-gradient(135deg, #6d28d9, #5b21b6); }
+  .period-h3 { margin: 20px 0 10px; font-size: 14px; color: var(--primary-dark); font-weight: 800; padding-bottom: 6px; border-bottom: 1px dashed var(--border); }
+  .period-h3:first-child { margin-top: 0; }
+  .period-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .period-card { border: 1.5px solid var(--border); border-radius: 12px; padding: 14px; background: #f8fafc; }
+  .period-card.current { border-color: var(--primary); background: var(--primary-lighter); box-shadow: 0 4px 12px rgba(var(--primary-rgb),.15); }
+  .period-card h3 { margin: 0 0 6px; font-size: 13px; color: var(--primary-dark); font-weight: 800; }
+  .period-card .pc-dates { font-size: 11px; color: var(--muted); margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px dashed var(--border); font-weight: 500; }
+  .period-card .pc-stat { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12.5px; border-bottom: 1px solid #eef2f7; }
+  .period-card .pc-stat:last-child { border-bottom: none; padding-top: 6px; border-top: 1px dashed var(--border); margin-top: 4px; }
+  .period-card .pc-stat .lbl { color: var(--muted); font-weight: 500; }
+  .period-card .pc-stat .val { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .period-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12.5px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .period-table th { background: linear-gradient(180deg, var(--primary-dark), var(--primary)); color: #fff; padding: 10px 8px; font-size: 12px; font-weight: 700; text-align: center; white-space: nowrap; }
+  .period-table td { padding: 9px 8px; text-align: center; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+  .period-table tbody tr:last-child td { border-bottom: none; }
+  .period-table tbody tr:nth-child(even) td { background: #f8fafc; }
+  .period-table .metric-name { text-align: right; font-weight: 700; color: var(--text); white-space: nowrap; }
+  .period-table .val-curr { font-weight: 800; color: var(--primary-dark); background: var(--primary-lighter) !important; }
+  .period-table .total-row td { background: #ede9fe !important; font-weight: 800; color: #6d28d9; border-top: 2px solid #c4b5fd; }
+  .period-table.building-table th { background: linear-gradient(180deg, #3730a3, #4f46e5); }
+  .period-table.utility-table th { background: linear-gradient(180deg, #0e7490, #0891b2); }
+  .period-table.construction-table th { background: linear-gradient(180deg, #9d174d, #be185d); }
+  .period-table.aggregate-table th { background: linear-gradient(180deg, #6d28d9, #7c3aed); }
+  .pct-good, .pct-bad, .pct-neutral, .pct-equal, .pct-new { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+  .pct-good { color: #16a34a; background: #dcfce7; }
+  .pct-bad { color: #dc2626; background: #fee2e2; }
+  .pct-neutral { color: #64748b; background: #f1f5f9; }
+  .pct-equal { color: #64748b; background: #f1f5f9; }
+  .pct-new { color: #7c3aed; background: #ede9fe; }
+
+  /* ===== Charts ===== */
+  .charts-section { margin-top: 24px; padding-top: 18px; border-top: 2px dashed var(--border); }
+  .chart-section-title { font-size: 16px; font-weight: 900; color: var(--primary-dark); margin-bottom: 16px; text-align: center; padding: 10px; background: linear-gradient(135deg, var(--primary-lighter), var(--primary-light)); border-radius: 10px; }
+  .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
+  .chart-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(15,23,42,.04); }
+  .chart-card.full-width { grid-column: 1 / -1; }
+  .chart-title { font-size: 13.5px; font-weight: 800; color: var(--primary-dark); margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
+  .chart-bars { display: flex; flex-direction: column; gap: 8px; }
+  .chart-bar-row { display: grid; grid-template-columns: 90px 1fr 110px; gap: 8px; align-items: center; font-size: 12px; }
+  .chart-bar-label { font-weight: 700; color: var(--text); text-align: right; overflow: hidden; text-overflow: ellipsis; }
+  .chart-bar-track { background: #f1f5f9; border-radius: 6px; height: 22px; position: relative; overflow: hidden; }
+  .chart-bar-fill { height: 100%; border-radius: 6px; transition: width .4s ease; min-width: 2px; }
+  .chart-bar-value { text-align: left; font-weight: 800; color: var(--primary-dark); font-variant-numeric: tabular-nums; font-size: 11.5px; direction: ltr; }
+  .chart-v-container { display: flex; align-items: flex-end; gap: 12px; height: 200px; padding: 10px 0; border-bottom: 2px solid var(--border); position: relative; }
+  .chart-v-group { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; position: relative; }
+  .chart-v-bars { display: flex; gap: 3px; align-items: flex-end; height: 100%; width: 100%; justify-content: center; }
+  .chart-v-bar { flex: 1; max-width: 26px; border-radius: 4px 4px 0 0; min-height: 3px; position: relative; transition: height .4s ease; cursor: pointer; }
+  .chart-v-bar:hover::after { content: attr(data-value); position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%); background: #0f172a; color: #fff; padding: 3px 6px; border-radius: 4px; font-size: 10px; white-space: nowrap; z-index: 5; }
+  .chart-v-label { font-size: 11px; font-weight: 700; color: var(--muted); margin-top: 8px; text-align: center; line-height: 1.3; }
+  .chart-legend { display: flex; gap: 12px; justify-content: center; margin-top: 10px; flex-wrap: wrap; font-size: 11px; font-weight: 700; }
+  .chart-legend-item { display: inline-flex; align-items: center; gap: 5px; color: var(--text); }
+  .chart-legend-dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .chart-donut-wrap { display: flex; justify-content: center; align-items: center; padding: 16px; gap: 20px; flex-wrap: wrap; }
+  .chart-donut { width: 160px; height: 160px; border-radius: 50%; position: relative; flex-shrink: 0; }
+  .chart-donut::after { content: ''; position: absolute; inset: 22%; background: #fff; border-radius: 50%; box-shadow: inset 0 2px 8px rgba(0,0,0,.1); }
+  .chart-donut-legend { display: flex; flex-direction: column; gap: 5px; font-size: 12px; }
+  .chart-donut-legend .dl-item { display: flex; align-items: center; gap: 6px; }
+  .chart-donut-legend .dl-color { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+  .chart-donut-legend .dl-label { font-weight: 700; color: var(--text); }
+  .chart-donut-legend .dl-value { margin-right: auto; color: var(--muted); font-variant-numeric: tabular-nums; font-size: 11px; }
+  .chart-empty { text-align: center; padding: 30px 10px; color: var(--muted); font-size: 12.5px; }
+
+  @media (max-width: 600px) {
+    .chart-bar-row { grid-template-columns: 70px 1fr 90px; font-size: 11px; }
+    .chart-bar-value { font-size: 10.5px; }
+    .chart-v-container { height: 160px; }
   }
 
+  /* ===== PRINT ===== */
   @media print {
     @page { size: A4 portrait; margin: 4mm; }
-    html, body { background:#fff!important; padding:0!important; margin:0!important; width:100%; height:100%; overflow:hidden!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .no-print { display:none!important; }
-    .quick-nav { display:none!important; }
+    html, body { background:#fff!important; padding:0!important; margin:0!important; width:100%; height:auto!important; overflow:visible!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .no-print, .quick-nav, #scrollTopBtn { display:none!important; }
     .container { max-width:100%!important; padding:0!important; margin:0!important; }
-    #reportPage { display:block!important; }
     #managePage { display:none!important; }
-    #printSheet { border-radius:0!important; box-shadow:none!important; page-break-inside:avoid; page-break-after:avoid; display:flex; flex-direction:column; min-height:calc(297mm - 8mm); max-height:calc(297mm - 8mm); overflow:hidden; }
-    .report-header { padding:9px 14px 7px!important; border-radius:0!important; text-align:right!important; display:flex!important; flex-direction:column!important; align-items:flex-end!important; flex-shrink:0; }
-    .report-header .logo-wrap { gap:12px!important; margin-bottom:4px!important; display:flex!important; flex-direction:row!important; align-items:center!important; justify-content:flex-start!important; width:100%!important; }
-    .report-header .logo-icon { width:52px!important; height:52px!important; font-size:30px!important; border-radius:12px!important; flex-shrink:0; }
-    .report-header h1 { font-size:30px!important; font-weight:900!important; -webkit-text-fill-color:#fff!important; color:#fff!important; text-shadow:0 2px 6px rgba(0,0,0,.35)!important; line-height:1.15!important; }
-    .report-header .subtitle { font-size:14px!important; font-weight:700!important; margin-top:2px!important; }
-    .report-header .divider-line { margin:4px 4px 4px auto!important; width:80px!important; height:2px!important; }
-    .report-header .meta { gap:5px!important; justify-content:flex-start!important; width:100%!important; margin-top:2px!important; }
-    .report-header .meta span { padding:2px 9px!important; font-size:11px!important; font-weight:700!important; }
+    body.view-report #reportPage { display:block!important; }
+    body.view-report #periodReportPage { display:none!important; }
+    body.view-period #periodReportPage { display:block!important; }
+    body.view-period #reportPage { display:none!important; }
+    body.view-period .period-controls { display:none!important; }
+    #printSheet { border-radius:0!important; box-shadow:none!important; page-break-inside:avoid; display:flex; flex-direction:column; min-height:calc(297mm - 8mm); max-height:calc(297mm - 8mm); overflow:hidden; }
+    .report-header { padding:9px 14px 7px!important; border-radius:0!important; flex-shrink:0; }
+    .report-header .logo-icon { width:44px!important; height:44px!important; font-size:26px!important; }
+    .report-header h1 { font-size:26px!important; -webkit-text-fill-color:#fff!important; color:#fff!important; text-shadow:0 2px 6px rgba(0,0,0,.35)!important; }
+    .report-header .meta span { padding:2px 9px!important; font-size:11px!important; }
     .bill-info { padding:5px 14px!important; flex-shrink:0; }
-    .bill-info h3 { font-size:15px!important; margin-bottom:4px!important; font-weight:900!important; }
-    .bill-info-grid { gap:3px!important; }
-    .bill-info-item { padding:4px 9px!important; font-size:12px!important; }
-    .bill-info-item .k { font-size:12px!important; font-weight:700!important; }
-    .bill-info-item .v { font-weight:900!important; font-size:12px!important; }
     .bill-info-banner { display:none!important; }
     .report-body { padding:4px 14px 5px!important; flex:1; display:flex; flex-direction:column; min-height:0; overflow:hidden; }
-    .table-wrap { overflow:visible!important; flex-shrink:0; }
-    .report-table { margin-top:0!important; flex-shrink:0; }
-    .report-table th { padding:6px 4px!important; font-size:calc(17px * var(--print-scale))!important; font-weight:900!important; line-height:1.2!important; }
-    .report-table td { padding:5px 4px!important; font-size:calc(17px * var(--print-scale))!important; font-weight:800!important; color:#0f172a!important; line-height:1.25!important; }
-    .report-table .total-row td { padding:6px 4px!important; font-size:calc(17px * var(--print-scale))!important; font-weight:900!important; }
-    .balance-label { font-size:calc(10px * var(--print-scale))!important; }
-    .check-box { width:16px!important; height:16px!important; border-radius:4px!important; border-width:2.5px!important; }
+    .table-wrap { overflow:visible!important; }
+    .report-table th { padding:6px 4px!important; font-size:calc(15px * var(--print-scale))!important; }
+    .report-table td { padding:5px 4px!important; font-size:calc(15px * var(--print-scale))!important; }
+    .check-box { width:16px!important; height:16px!important; }
     .check-box svg { width:10px!important; height:10px!important; }
     .status-text { font-size:calc(9px * var(--print-scale))!important; }
     .balance-summary { margin-top:4px!important; padding:5px 10px!important; }
-    .balance-summary .title-sm { font-size:calc(11px * var(--print-scale))!important; margin-bottom:2px!important; }
-    .balance-summary .s-item { font-size:calc(10.5px * var(--print-scale))!important; margin-bottom:1px!important; }
+    .balance-summary .title-sm { font-size:calc(11px * var(--print-scale))!important; }
+    .balance-summary .s-item { font-size:calc(10.5px * var(--print-scale))!important; }
     .fund-report-box { margin-top:4px!important; padding:5px 10px!important; }
     .fund-report-box .title-sm { font-size:calc(11.5px * var(--print-scale))!important; }
     .fund-report-box .fund-item .lbl { font-size:calc(10px * var(--print-scale))!important; }
@@ -338,10 +352,28 @@
     .payment-info-box { margin-top:4px!important; padding:5px 12px!important; }
     .payment-info-box .title { font-size:10.5px!important; }
     .payment-info-box .card-number { font-size:15px!important; padding:2px 9px!important; }
-    .payment-info-box .holder { font-size:10.5px!important; }
     .report-footer { margin-top:auto!important; padding:4px 10px!important; font-size:9.5px!important; }
-    .report-footer .sign { margin-top:3px!important; font-size:9.5px!important; padding:0 15px!important; }
+    .report-footer .sign { margin-top:3px!important; font-size:9.5px!important; }
     .report-footer .sign .line { margin-top:10px!important; }
+    .period-report-wrap { box-shadow:none!important; padding:0!important; border-radius:0!important; }
+    .period-cards { grid-template-columns: repeat(3, 1fr)!important; gap: 6px!important; margin-bottom: 10px!important; }
+    .period-card { padding: 8px!important; }
+    .period-card h3 { font-size: 11px!important; }
+    .period-card .pc-dates { font-size: 9.5px!important; margin-bottom: 5px!important; padding-bottom: 4px!important; }
+    .period-card .pc-stat { font-size: 10.5px!important; padding: 2px 0!important; }
+    .period-h3 { margin: 12px 0 6px!important; font-size: 12px!important; }
+    .period-table { font-size: 9.5px!important; }
+    .period-table th { font-size: 9.5px!important; padding: 5px 3px!important; }
+    .period-table td { padding: 4px 3px!important; font-size: 10px!important; }
+    .pct-good, .pct-bad, .pct-neutral, .pct-equal, .pct-new { font-size: 9px!important; padding: 1px 5px!important; }
+    .charts-section { page-break-before: always; border-top: none!important; margin-top: 0!important; padding-top: 10px!important; }
+    .chart-grid { grid-template-columns: repeat(2, 1fr)!important; gap: 8px!important; }
+    .chart-card { padding: 8px!important; break-inside: avoid; }
+    .chart-card.full-width { grid-column: 1 / -1!important; }
+    .chart-title { font-size: 11px!important; margin-bottom: 6px!important; }
+    .chart-v-container { height: 110px!important; }
+    .chart-bar-row { font-size: 10px!important; grid-template-columns: 70px 1fr 80px!important; }
+    .chart-bar-track { height: 16px!important; }
   }
 </style>
 </head>
@@ -368,49 +400,18 @@
       </div>
     </header>
 
-    <!-- ===== نوار ناوبری سریع صفحه اصلی ===== -->
     <nav class="quick-nav no-print" id="quickNav" aria-label="میانبر بخش‌ها">
-      <button type="button" class="qn-btn" onclick="scrollToSection('sec-units')" data-target="sec-units" title="واحدهای ساختمان (Shift+Alt+۱)">
-        <span class="qn-key">۱</span>
-        <span class="qn-icon">🏠</span>
-        <span class="qn-label">واحدها</span>
-      </button>
-      <button type="button" class="qn-btn" onclick="scrollToSection('sec-bills')" data-target="sec-bills" title="قبض‌ها و هزینه‌ها (Shift+Alt+۲)">
-        <span class="qn-key">۲</span>
-        <span class="qn-icon">📋</span>
-        <span class="qn-label">قبض‌ها</span>
-      </button>
-      <button type="button" class="qn-btn" onclick="scrollToSection('sec-payments')" data-target="sec-payments" title="ثبت پرداخت‌ها (Shift+Alt+۳)">
-        <span class="qn-key">۳</span>
-        <span class="qn-icon">💵</span>
-        <span class="qn-label">پرداخت‌ها</span>
-      </button>
-      <button type="button" class="qn-btn" onclick="scrollToSection('sec-adjustments')" data-target="sec-adjustments" title="تعدیلات و محاسبات (Shift+Alt+۴)">
-        <span class="qn-key">۴</span>
-        <span class="qn-icon">🧮</span>
-        <span class="qn-label">تعدیلات</span>
-      </button>
-      <button type="button" class="qn-btn" onclick="scrollToSection('sec-card')" data-target="sec-card" title="اطلاعات کارت (Shift+Alt+۵)">
-        <span class="qn-key">۵</span>
-        <span class="qn-icon">💳</span>
-        <span class="qn-label">کارت</span>
-      </button>
-      <button type="button" class="qn-btn" onclick="scrollToSection('sec-backup')" data-target="sec-backup" title="پشتیبان‌گیری (Shift+Alt+۶)">
-        <span class="qn-key">۶</span>
-        <span class="qn-icon">💾</span>
-        <span class="qn-label">پشتیبان</span>
-      </button>
-      <button type="button" class="qn-btn report-btn" onclick="showReport()" title="گزارش اهالی (Shift+Alt+۰)">
-        <span class="qn-key">۰</span>
-        <span class="qn-icon">📄</span>
-        <span class="qn-label">گزارش اهالی</span>
-      </button>
+      <button type="button" class="qn-btn" onclick="scrollToSection('sec-units')" data-target="sec-units" title="واحدها (Shift+Alt+۱)"><span class="qn-key">۱</span><span class="qn-icon">🏠</span><span class="qn-label">واحدها</span></button>
+      <button type="button" class="qn-btn" onclick="scrollToSection('sec-bills')" data-target="sec-bills" title="قبض‌ها (Shift+Alt+۲)"><span class="qn-key">۲</span><span class="qn-icon">📋</span><span class="qn-label">قبض‌ها</span></button>
+      <button type="button" class="qn-btn" onclick="scrollToSection('sec-payments')" data-target="sec-payments" title="پرداخت‌ها (Shift+Alt+۳)"><span class="qn-key">۳</span><span class="qn-icon">💵</span><span class="qn-label">پرداخت‌ها</span></button>
+      <button type="button" class="qn-btn" onclick="scrollToSection('sec-adjustments')" data-target="sec-adjustments" title="تعدیلات (Shift+Alt+۴)"><span class="qn-key">۴</span><span class="qn-icon">🧮</span><span class="qn-label">تعدیلات</span></button>
+      <button type="button" class="qn-btn" onclick="scrollToSection('sec-card')" data-target="sec-card" title="کارت (Shift+Alt+۵)"><span class="qn-key">۵</span><span class="qn-icon">💳</span><span class="qn-label">کارت</span></button>
+      <button type="button" class="qn-btn" onclick="scrollToSection('sec-backup')" data-target="sec-backup" title="پشتیبان (Shift+Alt+۶)"><span class="qn-key">۶</span><span class="qn-icon">💾</span><span class="qn-label">پشتیبان</span></button>
+      <button type="button" class="qn-btn period-btn" onclick="showPeriodReport()" title="گزارش دوره‌ای (Shift+Alt+۷)"><span class="qn-key">۷</span><span class="qn-icon">📊</span><span class="qn-label">گزارش دوره‌ای</span></button>
+      <button type="button" class="qn-btn report-btn" onclick="showReport()" title="گزارش اهالی (Shift+Alt+۰)"><span class="qn-key">۰</span><span class="qn-icon">📄</span><span class="qn-label">گزارش اهالی</span></button>
     </nav>
 
-    <section class="card">
-      <h2><span class="num">۰</span> خلاصه وضعیت ساختمان</h2>
-      <div class="stats-grid" id="statsGrid"></div>
-    </section>
+    <section class="card"><h2><span class="num">۰</span> خلاصه وضعیت ساختمان</h2><div class="stats-grid" id="statsGrid"></div></section>
 
     <section class="card">
       <h2><span class="num">💰</span> صندوق ذخیره ساختمان</h2>
@@ -434,9 +435,7 @@
     <section class="card" id="sec-bills">
       <h2><span class="num">۲</span> قبض‌ها و هزینه‌ها</h2>
       <button class="btn" onclick="openBillModal()" style="margin-bottom:10px;">➕ افزودن قبض جدید</button>
-      <div class="bill-info-banner">
-        📅 <strong>قانون ۱۰ روز (بر اساس تاریخ خود قبض):</strong> قبض‌هایی که بیش از ۱۰ روز از <strong>تاریخ قبض</strong>شان گذشته باشد، در <strong>گزارش اهالی نمایش داده نمی‌شوند</strong> (سهم‌شان همچنان در محاسبه بدهی/بستانکاری باقی می‌ماند).
-      </div>
+      <div class="bill-info-banner">📅 <strong>قانون ۱۰ روز:</strong> قبض‌هایی که بیش از ۱۰ روز از تاریخشان گذشته، در گزارش اهالی نمایش داده نمی‌شوند (سهم‌شان در بدهی باقی می‌ماند).</div>
       <div class="bill-filter-bar" id="billFilterBar"></div>
       <div class="table-wrap"><table id="billsTable"></table></div>
     </section>
@@ -445,7 +444,7 @@
       <h2><span class="num">۳</span> ثبت پرداخت واحدها</h2>
       <div class="form-row">
         <select id="paymentUnit" style="flex:1;min-width:140px;"></select>
-        <input id="paymentDate" type="date" style="max-width:170px;">
+        <input id="paymentDate" type="text" class="pdp-date-input" placeholder="انتخاب تاریخ" style="max-width:200px;">
         <input id="paymentAmount" type="text" inputmode="numeric" placeholder="مبلغ پرداختی" style="max-width:170px;">
       </div>
       <div class="form-row" style="margin-top:4px;">
@@ -462,26 +461,16 @@
           </label>
         </div>
       </div>
-      <div class="form-row" style="margin-top:10px;">
-        <button class="btn" onclick="addPayment()">➕ ثبت پرداخت</button>
-      </div>
+      <div class="form-row" style="margin-top:10px;"><button class="btn" onclick="addPayment()">➕ ثبت پرداخت</button></div>
       <div class="table-wrap"><table id="paymentsTable"></table></div>
     </section>
 
     <section class="card" id="sec-adjustments">
       <h2><span class="num">۴</span> تعدیلات و محاسبات هوشمند واحدها</h2>
-      <p class="hint" style="margin-top:0;">
-        🧮 محاسبه‌ی هر واحد: <strong>پرداختی (+)</strong> ، <strong>سهم و بدهی‌ها (−)</strong>.
-        نتیجه: مثبت = 🟢 بستانکار، منفی = 🔴 بدهکار، صفر = ✅ تسویه.
-        <br>
-        ℹ️ تعدیلات بدهی دستی به‌صورت <strong>خودکار حذف نمی‌شوند</strong> و تا زمانی که خودتان نخواهید باقی می‌مانند.
-      </p>
+      <p class="hint" style="margin-top:0;">🧮 محاسبه: <strong>پرداختی (+)</strong> ، <strong>سهم و بدهی‌ها (−)</strong>. نتیجه: مثبت = 🟢 بستانکار، منفی = 🔴 بدهکار، صفر = ✅ تسویه.</p>
       <div class="form-row" style="margin-top:10px;">
         <select id="adjUnit" style="flex:1;min-width:140px;"></select>
-        <select id="adjType" style="max-width:170px;">
-          <option value="debt">🔴 بدهکار دستی (−)</option>
-          <option value="credit">🟢 بستانکار دستی (+)</option>
-        </select>
+        <select id="adjType" style="max-width:170px;"><option value="debt">🔴 بدهکار دستی (−)</option><option value="credit">🟢 بستانکار دستی (+)</option></select>
         <input id="adjAmount" type="text" inputmode="numeric" placeholder="مبلغ (تومان)" style="max-width:160px;">
         <input id="adjNote" placeholder="یادداشت (اختیاری)" style="max-width:220px;">
         <button class="btn" onclick="saveAdjustment()">💾 ذخیره تعدیل</button>
@@ -512,129 +501,217 @@
   <div id="reportPage">
     <div class="header-btns no-print" style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;">
       <button class="btn btn-sm" style="background:#64748b;" onclick="hideReport()">⬅️ بازگشت</button>
-      <button class="btn btn-sm" onclick="window.print()">🖨️ چاپ / PDF</button>
+      <button class="btn btn-sm" onclick="printPage()">🖨️ چاپ / PDF</button>
     </div>
     <div id="printSheet">
       <div class="report-header">
-        <div class="logo-wrap">
-          <div class="logo-icon">🏢</div>
-          <h1 id="reportBuildingName">ساختمان صدف</h1>
-        </div>
+        <div class="logo-wrap"><div class="logo-icon">🏢</div><h1 id="reportBuildingName">ساختمان صدف</h1></div>
         <div class="subtitle">صورت‌حساب هزینه‌های ساختمان</div>
         <div class="divider-line"></div>
-        <div class="meta">
-          <span>📅 تاریخ: <strong id="reportDate">-</strong></span>
-          <span>🏠 تعداد واحدها: <strong id="reportUnitsCount">۰</strong></span>
-        </div>
+        <div class="meta"><span>📅 تاریخ: <strong id="reportDate">-</strong></span><span>🏠 تعداد واحدها: <strong id="reportUnitsCount">۰</strong></span></div>
       </div>
       <div class="bill-info" id="billInfoBox"></div>
       <div class="report-body" id="reportArea"></div>
     </div>
   </div>
+
+  <div id="periodReportPage">
+    <div class="header-btns no-print" style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-sm" style="background:#64748b;" onclick="hidePeriodReport()">⬅️ بازگشت</button>
+      <button class="btn btn-sm" onclick="printPage()">🖨️ چاپ / PDF</button>
+    </div>
+    <div class="period-report-wrap">
+      <div class="period-header"><h1>📊 گزارش عملکرد دوره‌ای</h1><p id="periodSubtitle">-</p></div>
+      <div class="period-controls no-print">
+        <label>بازه:</label>
+        <select id="periodMonths">
+          <option value="3">۳ ماهه</option><option value="6">۶ ماهه</option><option value="9">۹ ماهه</option><option value="12">یکساله</option>
+        </select>
+        <label>پایان دوره:</label>
+        <input id="periodReference" type="text" class="pdp-date-input" placeholder="انتخاب تاریخ" style="min-width:180px;">
+        <button type="button" class="btn btn-sm btn-generate" onclick="renderPeriodReport()">📊 ایجاد گزارش</button>
+      </div>
+      <div id="periodReportBody"></div>
+    </div>
+  </div>
 </div>
 
-<div class="modal-overlay" id="billModal">
-  <div class="modal" id="billModalContent"></div>
+<div class="modal-overlay" id="billModal"><div class="modal" id="billModalContent"></div></div>
+
+<div class="pdp-overlay" id="pdpOverlay">
+  <div class="pdp-calendar">
+    <div class="pdp-header">
+      <button class="pdp-nav" type="button" onclick="pdpPrev()">‹</button>
+      <div class="pdp-title" id="pdpTitle"></div>
+      <button class="pdp-nav" type="button" onclick="pdpNext()">›</button>
+    </div>
+    <div class="pdp-weekdays"><span>ش</span><span>ی</span><span>د</span><span>س</span><span>چ</span><span>پ</span><span>ج</span></div>
+    <div class="pdp-days" id="pdpDays"></div>
+    <div class="pdp-actions">
+      <button type="button" class="btn btn-sm" style="background:#e2e8f0;color:#334155;" onclick="pdpClear()">پاک کردن</button>
+      <button type="button" class="btn btn-sm" onclick="pdpToday()">امروز</button>
+    </div>
+  </div>
 </div>
 
 <button id="scrollTopBtn" onclick="scrollToTop()" title="بازگشت به بالا">⬆</button>
 
 <script>
-/* ================= ناوبری سریع ================= */
+/* ================= Jalali Conversion ================= */
+const PDP_MONTHS = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+function g2j(gy, gm, gd) {
+  const g_d_m = [0,31,59,90,120,151,181,212,243,273,304,334];
+  let jy = (gy <= 1600) ? 0 : 979; gy -= (gy <= 1600) ? 621 : 1600;
+  const gy2 = (gm > 2) ? (gy + 1) : gy;
+  let days = (365 * gy) + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100) + Math.floor((gy2 + 399) / 400) - 80 + gd + g_d_m[gm - 1];
+  jy += 33 * Math.floor(days / 12053); days %= 12053;
+  jy += 4 * Math.floor(days / 1461); days %= 1461;
+  jy += Math.floor((days - 1) / 365);
+  if (days > 365) days = (days - 1) % 365;
+  const jm = (days < 186) ? 1 + Math.floor(days / 31) : 7 + Math.floor((days - 186) / 30);
+  const jd = 1 + ((days < 186) ? (days % 31) : ((days - 186) % 30));
+  return [jy, jm, jd];
+}
+function j2g(jy, jm, jd) {
+  let gy = (jy <= 979) ? 621 : 1600; jy -= (jy <= 979) ? 0 : 979;
+  let days = (365 * jy) + Math.floor(jy / 33) * 8 + Math.floor(((jy % 33) + 3) / 4) + 78 + jd + ((jm < 7) ? (jm - 1) * 31 : ((jm - 7) * 30) + 186);
+  gy += 400 * Math.floor(days / 146097); days %= 146097;
+  if (days > 36524) { gy += 100 * Math.floor(--days / 36524); days %= 36524; if (days >= 365) days++; }
+  gy += 4 * Math.floor(days / 1461); days %= 1461;
+  gy += Math.floor((days - 1) / 365);
+  if (days > 365) days = (days - 1) % 365;
+  let gd = days + 1;
+  const sa = [0,31,((gy%4===0&&gy%100!==0)||(gy%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];
+  let gm; for (gm = 1; gm <= 12; gm++) { if (gd <= sa[gm]) break; gd -= sa[gm]; }
+  return [gy, gm, gd];
+}
+function isJLeap(jy) { return ((25 * jy + 11) % 33) < 8; }
+function daysInJMonth(jy, jm) {
+  if (jm <= 6) return 31;
+  if (jm <= 11) return 30;
+  return isJLeap(jy) ? 30 : 29;
+}
+function isoToJalaliStr(iso) {
+  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return '';
+  const [gy, gm, gd] = iso.split('-').map(Number);
+  const [jy, jm, jd] = g2j(gy, gm, gd);
+  return `${toFa(jd)} ${PDP_MONTHS[jm-1]} ${toFa(jy)}`;
+}
+
+/* ================= Persian Date Picker ================= */
+let pdpTarget = null, pdpY = 0, pdpM = 0;
+function initPdp(id) {
+  const el = document.getElementById(id);
+  if (!el || el._pdpInit) return;
+  el._pdpInit = true;
+  el.readOnly = true;
+  el.addEventListener('click', (e) => { e.preventDefault(); openPdp(id); });
+}
+function setPdpValue(el, iso) {
+  if (!iso) { el.value = ''; el.dataset.iso = ''; return; }
+  el.value = isoToJalaliStr(iso);
+  el.dataset.iso = iso;
+}
+function getPdpIso(id) {
+  const el = document.getElementById(id);
+  return el ? (el.dataset.iso || '') : '';
+}
+function openPdp(id) {
+  pdpTarget = id;
+  const el = document.getElementById(id);
+  const iso = el.dataset.iso || todayIso();
+  const [gy, gm, gd] = iso.split('-').map(Number);
+  const [jy, jm] = g2j(gy, gm, gd);
+  pdpY = jy; pdpM = jm;
+  renderPdp();
+  document.getElementById('pdpOverlay').classList.add('show');
+}
+function renderPdp() {
+  document.getElementById('pdpTitle').textContent = `${PDP_MONTHS[pdpM-1]} ${toFa(pdpY)}`;
+  const [gy1, gm1, gd1] = j2g(pdpY, pdpM, 1);
+  const firstDow = (new Date(gy1, gm1-1, gd1).getDay() + 1) % 7;
+  const dim = daysInJMonth(pdpY, pdpM);
+  const t = new Date(); const [tjy, tjm, tjd] = g2j(t.getFullYear(), t.getMonth()+1, t.getDate());
+  const selIso = document.getElementById(pdpTarget)?.dataset.iso || '';
+  const selJ = selIso ? g2j(...selIso.split('-').map(Number)) : null;
+  let html = '';
+  for (let i = 0; i < firstDow; i++) html += '<span class="pdp-day empty"></span>';
+  for (let d = 1; d <= dim; d++) {
+    let cls = 'pdp-day';
+    if (tjy === pdpY && tjm === pdpM && tjd === d) cls += ' today';
+    if (selJ && selJ[0] === pdpY && selJ[1] === pdpM && selJ[2] === d) cls += ' selected';
+    html += `<span class="${cls}" onclick="pdpSelect(${d})">${toFa(d)}</span>`;
+  }
+  document.getElementById('pdpDays').innerHTML = html;
+}
+function pdpSelect(d) {
+  const [gy, gm, gd] = j2g(pdpY, pdpM, d);
+  const iso = `${gy}-${String(gm).padStart(2,'0')}-${String(gd).padStart(2,'0')}`;
+  const el = document.getElementById(pdpTarget);
+  if (el) { setPdpValue(el, iso); el.dispatchEvent(new Event('change')); }
+  closePdp();
+}
+function pdpToday() {
+  const el = document.getElementById(pdpTarget);
+  if (el) { setPdpValue(el, todayIso()); el.dispatchEvent(new Event('change')); }
+  closePdp();
+}
+function pdpClear() {
+  const el = document.getElementById(pdpTarget);
+  if (el) { el.value = ''; el.dataset.iso = ''; el.dispatchEvent(new Event('change')); }
+  closePdp();
+}
+function pdpPrev() { pdpM--; if (pdpM < 1) { pdpM = 12; pdpY--; } renderPdp(); }
+function pdpNext() { pdpM++; if (pdpM > 12) { pdpM = 1; pdpY++; } renderPdp(); }
+function closePdp() { document.getElementById('pdpOverlay').classList.remove('show'); pdpTarget = null; }
+document.getElementById('pdpOverlay').addEventListener('click', (e) => { if (e.target.id === 'pdpOverlay') closePdp(); });
+
+/* ================= Nav ================= */
 const QUICK_NAV_IDS = ['sec-units','sec-bills','sec-payments','sec-adjustments','sec-card','sec-backup'];
-
 function isReportVisible() {
-  const rp = document.getElementById('reportPage');
-  return rp && window.getComputedStyle(rp).display !== 'none';
+  const rp = document.getElementById('reportPage'); const pp = document.getElementById('periodReportPage');
+  return (rp && getComputedStyle(rp).display !== 'none') || (pp && getComputedStyle(pp).display !== 'none');
 }
-
 function scrollToSection(sectionId) {
-  const el = document.getElementById(sectionId);
-  if (!el) return;
-  const nav = document.getElementById('quickNav');
-  const navH = nav ? nav.offsetHeight : 70;
+  const el = document.getElementById(sectionId); if (!el) return;
+  const nav = document.getElementById('quickNav'); const navH = nav ? nav.offsetHeight : 70;
   const rect = el.getBoundingClientRect();
-  const targetY = window.scrollY + rect.top - navH - 16;
-  window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
-  if (nav) {
-    nav.querySelectorAll('.qn-btn[data-target]').forEach(b => {
-      b.classList.toggle('active', b.dataset.target === sectionId);
-    });
-  }
+  window.scrollTo({ top: Math.max(0, window.scrollY + rect.top - navH - 16), behavior: 'smooth' });
+  if (nav) nav.querySelectorAll('.qn-btn[data-target]').forEach(b => b.classList.toggle('active', b.dataset.target === sectionId));
 }
-
 function updateQuickNavActive() {
-  // نوار میانبر فقط در صفحه اصلی وجود دارد
   if (isReportVisible()) return;
-  const nav = document.getElementById('quickNav');
-  if (!nav) return;
-  const navH = nav.offsetHeight;
-  const threshold = navH + 80;
-  let currentId = null;
-  for (const id of QUICK_NAV_IDS) {
-    const el = document.getElementById(id);
-    if (!el) continue;
-    if (el.getBoundingClientRect().top - threshold <= 0) currentId = id;
-  }
-  nav.querySelectorAll('.qn-btn[data-target]').forEach(b => {
-    b.classList.toggle('active', b.dataset.target === currentId);
-  });
+  const nav = document.getElementById('quickNav'); if (!nav) return;
+  const threshold = nav.offsetHeight + 80; let currentId = null;
+  for (const id of QUICK_NAV_IDS) { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top - threshold <= 0) currentId = id; }
+  nav.querySelectorAll('.qn-btn[data-target]').forEach(b => b.classList.toggle('active', b.dataset.target === currentId));
 }
-
 window.addEventListener('scroll', () => {
   updateQuickNavActive();
   const b = document.getElementById('scrollTopBtn');
-  if (b) {
-    if (window.scrollY > 300) b.classList.add('show'); else b.classList.remove('show');
-  }
+  if (b) b.classList.toggle('show', window.scrollY > 300);
 }, { passive: true });
-
-// کلیدهای میانبر: Shift + Alt + اعداد (فقط در صفحه اصلی)
 document.addEventListener('keydown', (e) => {
   if (!e.shiftKey || !e.altKey) return;
-  const tag = (e.target && e.target.tagName || '').toLowerCase();
-  if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
-  if (isReportVisible()) return; // میانبرها فقط در صفحه مدیریت فعال هستند
-  const map = {
-    'Digit1': 'sec-units',      'Numpad1': 'sec-units',
-    'Digit2': 'sec-bills',      'Numpad2': 'sec-bills',
-    'Digit3': 'sec-payments',   'Numpad3': 'sec-payments',
-    'Digit4': 'sec-adjustments','Numpad4': 'sec-adjustments',
-    'Digit5': 'sec-card',       'Numpad5': 'sec-card',
-    'Digit6': 'sec-backup',     'Numpad6': 'sec-backup',
-    'Digit0': 'report',         'Numpad0': 'report'
-  };
-  const id = map[e.code];
-  if (!id) return;
+  const tag = (e.target?.tagName || '').toLowerCase();
+  if (['input','textarea','select'].includes(tag) || isReportVisible()) return;
+  const map = { 'Digit1':'sec-units','Numpad1':'sec-units','Digit2':'sec-bills','Numpad2':'sec-bills','Digit3':'sec-payments','Numpad3':'sec-payments','Digit4':'sec-adjustments','Numpad4':'sec-adjustments','Digit5':'sec-card','Numpad5':'sec-card','Digit6':'sec-backup','Numpad6':'sec-backup','Digit7':'period','Numpad7':'period','Digit0':'report','Numpad0':'report' };
+  const id = map[e.code]; if (!id) return;
   e.preventDefault();
   if (id === 'report') showReport();
+  else if (id === 'period') showPeriodReport();
   else scrollToSection(id);
 });
 
-/* ================= ذخیره‌سازی ================= */
-const STORAGE_KEYS = {
-  units:'bm_v2_units', bills:'bm_v2_bills', payments:'bm_v2_payments',
-  paidStatus:'bm_v2_paidStatus', buildingName:'bm_v2_buildingName',
-  cardInfo:'bm_v2_cardInfo', theme:'bm_v2_theme', adjustments:'bm_v2_adjustments'
-};
-function load(key, fallback) {
-  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
-}
+/* ================= Storage ================= */
+const STORAGE_KEYS = { units:'bm_v2_units', bills:'bm_v2_bills', payments:'bm_v2_payments', paidStatus:'bm_v2_paidStatus', buildingName:'bm_v2_buildingName', cardInfo:'bm_v2_cardInfo', theme:'bm_v2_theme', adjustments:'bm_v2_adjustments' };
+function load(k, fb) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fb; } catch (e) { return fb; } }
 (function migrateOldData() {
   if (!localStorage.getItem(STORAGE_KEYS.units)) {
     const oldUnits = localStorage.getItem('units');
-    if (oldUnits) {
-      try {
-        localStorage.setItem(STORAGE_KEYS.units, oldUnits);
-        ['bills','payments','paidStatus','buildingName','cardInfo','adjustments'].forEach(k => {
-          const v = localStorage.getItem(k) || localStorage.getItem('bm_v2_' + k);
-          if (v) localStorage.setItem(STORAGE_KEYS[k], v);
-        });
-      } catch(e) {}
-    }
+    if (oldUnits) { try { localStorage.setItem(STORAGE_KEYS.units, oldUnits); ['bills','payments','paidStatus','buildingName','cardInfo','adjustments'].forEach(k => { const v = localStorage.getItem(k) || localStorage.getItem('bm_v2_' + k); if (v) localStorage.setItem(STORAGE_KEYS[k], v); }); } catch(e) {} }
   }
 })();
-
 let units = load(STORAGE_KEYS.units, []);
 let bills = load(STORAGE_KEYS.bills, []);
 let payments = load(STORAGE_KEYS.payments, []);
@@ -655,102 +732,52 @@ function save() {
   localStorage.setItem(STORAGE_KEYS.theme, JSON.stringify(currentTheme));
   localStorage.setItem(STORAGE_KEYS.adjustments, JSON.stringify(adjustments));
 }
-function toEn(str) {
-  return String(str || '')
-    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
-    .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
-    .replace(/[^\d]/g, '');
-}
-function toFa(str) { return String(str == null ? '' : str).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]); }
+function toEn(s) { return String(s || '').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^\d]/g, ''); }
+function toFa(s) { return String(s == null ? '' : s).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]); }
 function format(n) { return toFa(Math.round(Number(n) || 0).toLocaleString('en-US')); }
-function formatDate(dateStr) {
-  if (!dateStr) return '—';
-  const parts = dateStr.split('-');
-  if (parts.length !== 3) return toFa(dateStr);
-  try { return new Date(parts[0], parts[1]-1, parts[2]).toLocaleDateString('fa-IR'); }
-  catch (e) { return toFa(dateStr); }
-}
+function formatDate(ds) { if (!ds) return '—'; const p = ds.split('-'); if (p.length !== 3) return toFa(ds); return isoToJalaliStr(ds); }
 function todayFa() { return new Date().toLocaleDateString('fa-IR'); }
-function esc(s) {
-  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-function attachPersianNumeric(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.addEventListener('input', () => {
-    const clean = el.value.replace(/[^\d۰-۹٠-٩]/g, '');
-    el.value = toFa(clean);
-  });
-}
+function todayIso() { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`; }
+function esc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function attachPersianNumeric(id) { const el = document.getElementById(id); if (!el) return; el.addEventListener('input', () => { el.value = toFa(el.value.replace(/[^\d۰-۹٠-٩]/g, '')); }); }
 ['unitResidents','unitArea','paymentAmount','cardNumber','adjAmount'].forEach(attachPersianNumeric);
 
-/* ================= قانون ۱۰ روزه — بر اساس تاریخ خود قبض ================= */
+/* ================= Bill 10-day rule ================= */
 const DAY_MS = 24 * 60 * 60 * 1000;
-
 function getBillDateAtMidnight(b) {
   if (!b || !b.date) return null;
-  const parts = String(b.date).split('-');
-  if (parts.length !== 3) return null;
-  const y = parseInt(parts[0], 10);
-  const m = parseInt(parts[1], 10) - 1;
-  const d = parseInt(parts[2], 10);
-  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return null;
-  const dt = new Date(y, m, d);
-  if (isNaN(dt.getTime())) return null;
-  dt.setHours(0, 0, 0, 0);
-  return dt;
+  const p = String(b.date).split('-'); if (p.length !== 3) return null;
+  const dt = new Date(parseInt(p[0], 10), parseInt(p[1], 10)-1, parseInt(p[2], 10));
+  if (isNaN(dt.getTime())) return null; dt.setHours(0,0,0,0); return dt;
 }
 function billDaysSince(b) {
-  const billDate = getBillDateAtMidnight(b);
-  if (!billDate) return null;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const diffMs = today.getTime() - billDate.getTime();
-  return Math.round(diffMs / DAY_MS);
+  const bd = getBillDateAtMidnight(b); if (!bd) return null;
+  const t = new Date(); t.setHours(0,0,0,0);
+  return Math.round((t.getTime() - bd.getTime()) / DAY_MS);
 }
-function isBillRecent(b) {
-  const days = billDaysSince(b);
-  if (days === null) return true;
-  return days < 10;
-}
+function isBillRecent(b) { const d = billDaysSince(b); return d === null ? true : d < 10; }
 function billStatusBadge(b) {
-  const days = billDaysSince(b);
-  if (days === null) {
-    return '<span class="badge badge-unknown" title="تاریخ قبض ثبت نشده است — همیشه در گزارش نمایش داده می‌شود">❓ تاریخ نامشخص</span>';
-  }
-  if (days < 0) {
-    return `<span class="badge badge-future" title="تاریخ قبض در آینده است">🆕 ${toFa(Math.abs(days))} روز آینده</span>`;
-  }
-  if (days < 10) {
-    const rem = 10 - days;
-    return `<span class="badge badge-new" title="در گزارش اهالی نمایش داده می‌شود">🆕 ${toFa(rem)} روز مانده</span>`;
-  }
-  return `<span class="badge badge-old" title="در گزارش اهالی نمایش داده نمی‌شود">📦 ${toFa(days)} روز گذشته</span>`;
+  const d = billDaysSince(b);
+  if (d === null) return '<span class="badge badge-unknown" title="تاریخ نامشخص">❓ نامشخص</span>';
+  if (d < 0) return `<span class="badge badge-future">🆕 ${toFa(Math.abs(d))} روز آینده</span>`;
+  if (d < 10) return `<span class="badge badge-new">🆕 ${toFa(10-d)} روز مانده</span>`;
+  return `<span class="badge badge-old">📦 ${toFa(d)} روز گذشته</span>`;
 }
-function getFilteredBills() {
-  if (billFilter === 'recent') return bills.filter(isBillRecent);
-  if (billFilter === 'old') return bills.filter(b => !isBillRecent(b));
-  return bills;
-}
+function getFilteredBills() { if (billFilter === 'recent') return bills.filter(isBillRecent); if (billFilter === 'old') return bills.filter(b => !isBillRecent(b)); return bills; }
 function setBillFilter(f) { billFilter = f; render(); }
 
-/* ================= پرداخت ================= */
+/* ================= Payments ================= */
 let selectedPayType = 'regular';
 function selectPayType(type) {
   selectedPayType = type;
-  const reg = document.getElementById('payTypeRegular');
-  const bld = document.getElementById('payTypeBuilding');
+  const reg = document.getElementById('payTypeRegular'), bld = document.getElementById('payTypeBuilding');
   if (reg) reg.classList.toggle('selected', type === 'regular');
   if (bld) bld.classList.toggle('selected', type === 'building');
-  const regRadio = reg ? reg.querySelector('input') : null;
-  const bldRadio = bld ? bld.querySelector('input') : null;
-  if (regRadio) regRadio.checked = (type === 'regular');
-  if (bldRadio) bldRadio.checked = (type === 'building');
+  if (reg?.querySelector('input')) reg.querySelector('input').checked = (type === 'regular');
+  if (bld?.querySelector('input')) bld.querySelector('input').checked = (type === 'building');
 }
 function getFundData() {
-  const buildingPayments = payments.filter(p => p.type === 'building');
-  const income = buildingPayments.reduce((s, p) => s + p.amount, 0);
+  const income = payments.filter(p => p.type === 'building').reduce((s, p) => s + p.amount, 0);
   const totalBuildingShare = bills.filter(b => b.type === 'ساختمان').reduce((s, b) => s + b.amount, 0);
   const pendingBuilding = Math.max(0, totalBuildingShare - income);
   const withdrawals = bills.filter(b => b.fundSource === 'fund').reduce((s, b) => s + b.amount, 0);
@@ -760,23 +787,15 @@ function getUnitBalance(unitId) {
   const totalShare = bills.reduce((s, b) => s + (b.shares[unitId] || 0), 0);
   const totalPaid = payments.filter(p => p.unitId === unitId).reduce((s, p) => s + p.amount, 0);
   const adj = adjustments[unitId] ? adjustments[unitId].amount : 0;
-  const balance = totalPaid - totalShare - adj;
-  return { totalShare, totalPaid, adj, balance };
+  return { totalShare, totalPaid, adj, balance: totalPaid - totalShare - adj };
 }
-function balanceClass(b) {
-  if (b < 0) return 'balance-debt';
-  if (b > 0) return 'balance-credit';
-  return 'balance-settled';
-}
+function balanceClass(b) { return b < 0 ? 'balance-debt' : b > 0 ? 'balance-credit' : 'balance-settled'; }
 function syncPaidStatus() {
   let changed = false;
   units.forEach(u => {
     const { balance } = getUnitBalance(u.id);
-    if (balance < 0) {
-      if (paidStatus[u.id]) { paidStatus[u.id] = false; changed = true; }
-    } else {
-      if (!paidStatus[u.id]) { paidStatus[u.id] = true; changed = true; }
-    }
+    if (balance < 0) { if (paidStatus[u.id]) { paidStatus[u.id] = false; changed = true; } }
+    else if (!paidStatus[u.id]) { paidStatus[u.id] = true; changed = true; }
   });
   if (changed) save();
 }
@@ -788,41 +807,49 @@ function applyTheme(theme) {
   save();
 }
 document.querySelectorAll('.theme-dot').forEach(d => d.addEventListener('click', () => applyTheme(d.dataset.theme)));
-function editBuildingName() {
-  const n = prompt('نام ساختمان را وارد کنید:', buildingName);
-  if (n === null) return;
-  const t = n.trim();
-  if (!t) return alert('نام ساختمان نمی‌تواند خالی باشد');
-  buildingName = t; save(); render();
-}
-function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  document.documentElement.scrollTop = 0; document.body.scrollTop = 0;
-}
+function editBuildingName() { const n = prompt('نام ساختمان:', buildingName); if (n === null) return; const t = n.trim(); if (!t) return alert('نام نمی‌تواند خالی باشد'); buildingName = t; save(); render(); }
+function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 function showReport() {
+  document.body.classList.remove('view-period');
+  document.body.classList.add('view-report');
   document.getElementById('managePage').style.display = 'none';
+  document.getElementById('periodReportPage').style.display = 'none';
   document.getElementById('reportPage').style.display = 'block';
-  syncPaidStatus();
-  render();
-  setTimeout(scrollToTop, 20);
+  syncPaidStatus(); render(); setTimeout(scrollToTop, 20);
 }
 function hideReport() {
+  document.body.classList.remove('view-report');
   document.getElementById('reportPage').style.display = 'none';
   document.getElementById('managePage').style.display = 'block';
-  setTimeout(() => {
-    scrollToTop();
-    updateQuickNavActive();
-  }, 20);
+  setTimeout(() => { scrollToTop(); updateQuickNavActive(); }, 20);
 }
+function showPeriodReport() {
+  document.body.classList.remove('view-report');
+  document.body.classList.add('view-period');
+  document.getElementById('managePage').style.display = 'none';
+  document.getElementById('reportPage').style.display = 'none';
+  document.getElementById('periodReportPage').style.display = 'block';
+  // Initialize periodReference if empty
+  const pr = document.getElementById('periodReference');
+  if (pr && !pr.dataset.iso) setPdpValue(pr, todayIso());
+  syncPaidStatus(); render(); renderPeriodReport(); setTimeout(scrollToTop, 20);
+}
+function hidePeriodReport() {
+  document.body.classList.remove('view-period');
+  document.getElementById('periodReportPage').style.display = 'none';
+  document.getElementById('managePage').style.display = 'block';
+  setTimeout(() => { scrollToTop(); updateQuickNavActive(); }, 20);
+}
+function printPage() { window.print(); }
+
+/* ================= Units ================= */
 function addUnit() {
   const name = document.getElementById('unitName').value.trim();
   const residents = Number(toEn(document.getElementById('unitResidents').value)) || 0;
   const area = Number(toEn(document.getElementById('unitArea').value)) || 0;
   let phone = toEn(document.getElementById('unitPhone').value);
   if (!name) return alert('نام واحد را وارد کنید');
-  if (phone && !/^09\d{9}$/.test(phone)) {
-    if (!confirm('شماره موبایل معتبر نیست. با این حال ذخیره شود؟')) return;
-  }
+  if (phone && !/^09\d{9}$/.test(phone)) { if (!confirm('شماره موبایل معتبر نیست. با این حال ذخیره شود؟')) return; }
   units.push({ id: Date.now(), name, residents, area, phone });
   document.getElementById('unitName').value = '';
   document.getElementById('unitResidents').value = '۱';
@@ -831,7 +858,7 @@ function addUnit() {
   save(); render();
 }
 function removeUnit(id) {
-  if (!confirm('این واحد و تمام اطلاعات مرتبط با آن حذف شود؟')) return;
+  if (!confirm('این واحد و تمام اطلاعات مرتبط حذف شود؟')) return;
   units = units.filter(u => u.id !== id);
   delete paidStatus[id]; delete adjustments[id];
   bills.forEach(b => { delete b.shares[id]; });
@@ -839,16 +866,9 @@ function removeUnit(id) {
   save(); render();
 }
 function splitAmount(total, weights) {
-  const n = weights.length;
-  if (n === 0) return [];
+  const n = weights.length; if (n === 0) return [];
   const totalW = weights.reduce((s, w) => s + w, 0);
-  if (totalW === 0) {
-    const base = Math.floor(total / n);
-    const shares = new Array(n).fill(base);
-    let rem = total - base * n;
-    for (let i = 0; i < rem; i++) shares[i] += 1;
-    return shares;
-  }
+  if (totalW === 0) { const base = Math.floor(total / n); const shares = new Array(n).fill(base); let rem = total - base * n; for (let i = 0; i < rem; i++) shares[i] += 1; return shares; }
   const raw = weights.map(w => total * w / totalW);
   const floors = raw.map(x => Math.floor(x));
   let rem = total - floors.reduce((s, x) => s + x, 0);
@@ -856,58 +876,33 @@ function splitAmount(total, weights) {
   for (let k = 0; k < rem; k++) floors[order[k % n].i] += 1;
   return floors;
 }
-const BILL_TYPES = {
-  'آب': { icon: '💧', badge: 'badge-water' },
-  'گاز': { icon: '🔥', badge: 'badge-gas' },
-  'ساختمان': { icon: '🏢', badge: 'badge-building' },
-  'عمرانی': { icon: '🔨', badge: 'badge-construction' }
-};
-const BILL_TYPE_LABELS = {
-  'آب': 'قبض آب', 'گاز': 'قبض گاز',
-  'ساختمان': 'قبض ساختمان', 'عمرانی': 'هزینه عمرانی/تعمیراتی'
-};
+
+/* ================= Bills ================= */
+const BILL_TYPES = { 'آب': { icon: '💧', badge: 'badge-water' }, 'گاز': { icon: '🔥', badge: 'badge-gas' }, 'ساختمان': { icon: '🏢', badge: 'badge-building' }, 'عمرانی': { icon: '🔨', badge: 'badge-construction' } };
+const BILL_TYPE_LABELS = { 'آب': 'قبض آب', 'گاز': 'قبض گاز', 'ساختمان': 'قبض ساختمان', 'عمرانی': 'هزینه عمرانی/تعمیراتی' };
 function methodName(m) { return m === 'equal' ? 'مساوی' : m === 'residents' ? 'نفرات' : 'متراژ'; }
 function openBillModal(editId) {
-  const modal = document.getElementById('billModal');
-  const content = document.getElementById('billModalContent');
-  if (editId) { renderBillForm(content, editId); }
+  const modal = document.getElementById('billModal'); const content = document.getElementById('billModalContent');
+  if (editId) renderBillForm(content, editId);
   else {
     content.innerHTML = `
       <h3>📋 افزودن / ویرایش قبض</h3>
       <p class="hint" style="margin-top:0;">می‌خواهید قبض جدید بسازید یا قبض موجود را ویرایش کنید؟</p>
       <div class="choice-grid" style="margin-top:14px;">
-        <button class="choice-btn" onclick="renderBillForm(document.getElementById('billModalContent'), null)">
-          <span class="icon">➕</span><span>قبض جدید</span>
-        </button>
-        <button class="choice-btn" onclick="renderBillPicker(document.getElementById('billModalContent'))" ${bills.length === 0 ? 'disabled style="opacity:.5;cursor:not-allowed;"' : ''}>
-          <span class="icon">✏️</span><span>ویرایش قبض موجود</span>
-        </button>
+        <button class="choice-btn" onclick="renderBillForm(document.getElementById('billModalContent'), null)"><span class="icon">➕</span><span>قبض جدید</span></button>
+        <button class="choice-btn" onclick="renderBillPicker(document.getElementById('billModalContent'))" ${bills.length === 0 ? 'disabled style="opacity:.5;cursor:not-allowed;"' : ''}><span class="icon">✏️</span><span>ویرایش قبض موجود</span></button>
       </div>
       <div class="modal-actions"><button class="btn btn-secondary" onclick="closeBillModal()">انصراف</button></div>`;
   }
-  modal.classList.add('show');
-  document.body.style.overflow = 'hidden';
+  modal.classList.add('show'); document.body.style.overflow = 'hidden';
 }
-function closeBillModal() {
-  document.getElementById('billModal').classList.remove('show');
-  document.body.style.overflow = '';
-}
+function closeBillModal() { document.getElementById('billModal').classList.remove('show'); document.body.style.overflow = ''; }
 function renderBillPicker(content) {
   content.innerHTML = `
     <h3>✏️ انتخاب قبض برای ویرایش</h3>
-    <div style="max-height:55vh;overflow-y:auto;-webkit-overflow-scrolling:touch;">
-      ${bills.map(b => {
-        const t = BILL_TYPES[b.type] || BILL_TYPES['ساختمان'];
-        const isFund = b.fundSource === 'fund';
-        const days = billDaysSince(b);
-        const dayTxt = days === null ? '❓' : (days < 10 ? `🆕 ${toFa(10 - Math.max(0, days))}ر` : `📦 ${toFa(days)}ر`);
-        return `<button class="choice-btn" style="width:100%;flex-direction:row;justify-content:flex-start;text-align:right;padding:12px;margin-bottom:8px;" onclick="renderBillForm(document.getElementById('billModalContent'), ${b.id})">
-          <span class="icon" style="font-size:20px;">${t.icon}</span>
-          <div style="flex:1;">
-            <div style="font-weight:700;">${esc(b.name || b.title || 'بدون نام')} ${isFund ? '💰' : ''}</div>
-            <div style="font-size:12px;color:var(--muted);font-weight:500;margin-top:2px;">${BILL_TYPE_LABELS[b.type] || b.type}${isFund ? ' (از صندوق)' : ''} • ${format(b.amount)} تومان • ${dayTxt}</div>
-          </div>
-        </button>`;
+    <div style="max-height:55vh;overflow-y:auto;">
+      ${bills.map(b => { const t = BILL_TYPES[b.type] || BILL_TYPES['ساختمان']; const isFund = b.fundSource === 'fund'; const d = billDaysSince(b); const dt = d === null ? '❓' : (d < 10 ? `🆕 ${toFa(10-Math.max(0,d))}ر` : `📦 ${toFa(d)}ر`);
+        return `<button class="choice-btn" style="width:100%;flex-direction:row;justify-content:flex-start;text-align:right;padding:12px;margin-bottom:8px;" onclick="renderBillForm(document.getElementById('billModalContent'), ${b.id})"><span class="icon" style="font-size:20px;">${t.icon}</span><div style="flex:1;"><div style="font-weight:700;">${esc(b.name || b.title || 'بدون نام')} ${isFund ? '💰' : ''}</div><div style="font-size:12px;color:var(--muted);font-weight:500;margin-top:2px;">${BILL_TYPE_LABELS[b.type] || b.type}${isFund ? ' (از صندوق)' : ''} • ${format(b.amount)} ت • ${dt}</div></div></button>`;
       }).join('')}
     </div>
     <div class="modal-actions"><button class="btn btn-secondary" onclick="openBillModal()">بازگشت</button></div>`;
@@ -916,95 +911,57 @@ function renderBillForm(content, editId) {
   const editing = editId ? bills.find(b => b.id === editId) : null;
   const v = editing || { name: '', type: 'آب', date: '', amount: 0, method: 'equal', fundSource: 'residents' };
   const amountFa = v.amount ? toFa(String(v.amount)) : '';
-  const dateVal = v.date || '';
-  const titleText = editing ? '✏️ ویرایش قبض' : '➕ قبض جدید';
   const isConstruction = v.type === 'عمرانی';
   const fundSource = v.fundSource || 'residents';
   content.innerHTML = `
-    <h3>${titleText}</h3>
-    <div class="form-row">
-      <label style="font-size:13px;font-weight:600;color:var(--muted);">نام قبض:</label>
-      <input id="bm_name" placeholder="مثلاً: قبض آب مهر ۱۴۰۴" value="${esc(v.name)}" maxlength="60">
-    </div>
-    <div class="form-row">
-      <label style="font-size:13px;font-weight:600;color:var(--muted);">نوع:</label>
-      <select id="bm_type" onchange="toggleFundSourceRow()">
-        ${Object.keys(BILL_TYPE_LABELS).map(k => `<option value="${k}" ${v.type === k ? 'selected' : ''}>${BILL_TYPES[k].icon} ${BILL_TYPE_LABELS[k]}</option>`).join('')}
-      </select>
-    </div>
-    <div class="form-row" id="bm_fundSourceRow" style="${isConstruction ? '' : 'display:none;'}">
-      <label style="font-size:13px;font-weight:600;color:var(--muted);">منبع پرداخت:</label>
-      <select id="bm_fundSource">
-        <option value="residents" ${fundSource === 'residents' ? 'selected' : ''}>👥 تقسیم بین اهالی</option>
-        <option value="fund" ${fundSource === 'fund' ? 'selected' : ''}>💰 برداشت از صندوق ساختمان</option>
-      </select>
-    </div>
+    <h3>${editing ? '✏️ ویرایش قبض' : '➕ قبض جدید'}</h3>
+    <div class="form-row"><label style="font-size:13px;font-weight:600;color:var(--muted);">نام قبض:</label><input id="bm_name" placeholder="مثلاً: قبض آب مهر ۱۴۰۴" value="${esc(v.name)}" maxlength="60"></div>
+    <div class="form-row"><label style="font-size:13px;font-weight:600;color:var(--muted);">نوع:</label><select id="bm_type" onchange="toggleFundSourceRow()">${Object.keys(BILL_TYPE_LABELS).map(k => `<option value="${k}" ${v.type === k ? 'selected' : ''}>${BILL_TYPES[k].icon} ${BILL_TYPE_LABELS[k]}</option>`).join('')}</select></div>
+    <div class="form-row" id="bm_fundSourceRow" style="${isConstruction ? '' : 'display:none;'}"><label style="font-size:13px;font-weight:600;color:var(--muted);">منبع پرداخت:</label><select id="bm_fundSource"><option value="residents" ${fundSource === 'residents' ? 'selected' : ''}>👥 تقسیم بین اهالی</option><option value="fund" ${fundSource === 'fund' ? 'selected' : ''}>💰 برداشت از صندوق ساختمان</option></select></div>
     <div id="bm_fundHint"></div>
-    <div class="form-row">
-      <label style="font-size:13px;font-weight:600;color:var(--muted);">تاریخ قبض:</label>
-      <input id="bm_date" type="date" value="${dateVal}">
-    </div>
-    <p class="hint" style="margin-top:0;">📅 تاریخ قبض مبنای <strong>قانون ۱۰ روزه گزارش اهالی</strong> است. بدون تاریخ، قبض همیشه در گزارش نمایش داده می‌شود.</p>
-    <div class="form-row">
-      <label style="font-size:13px;font-weight:600;color:var(--muted);">مبلغ (تومان):</label>
-      <input id="bm_amount" type="text" inputmode="numeric" placeholder="مبلغ" value="${amountFa}">
-    </div>
-    <div class="form-row" id="bm_methodRow">
-      <label style="font-size:13px;font-weight:600;color:var(--muted);">روش تقسیم:</label>
-      <select id="bm_method">
-        <option value="equal" ${v.method === 'equal' ? 'selected' : ''}>تقسیم مساوی</option>
-        <option value="residents" ${v.method === 'residents' ? 'selected' : ''}>بر اساس نفرات</option>
-        <option value="area" ${v.method === 'area' ? 'selected' : ''}>بر اساس متراژ</option>
-      </select>
-    </div>
-    <p class="hint">برای قبض‌های ساختمان و عمرانی معمولاً تقسیم مساوی مناسب‌تر است.</p>
-    <div class="modal-actions">
-      <button class="btn btn-secondary" onclick="${editing ? 'openBillModal()' : 'closeBillModal()'}">انصراف</button>
-      <button class="btn" onclick="saveBill(${editId || 'null'})">💾 ذخیره</button>
-    </div>`;
+    <div class="form-row"><label style="font-size:13px;font-weight:600;color:var(--muted);">تاریخ قبض:</label><input id="bm_date" type="text" class="pdp-date-input" placeholder="انتخاب تاریخ" value="" data-iso="${v.date || ''}"></div>
+    <p class="hint" style="margin-top:0;">📅 تاریخ قبض مبنای <strong>قانون ۱۰ روزه</strong> است.</p>
+    <div class="form-row"><label style="font-size:13px;font-weight:600;color:var(--muted);">مبلغ (تومان):</label><input id="bm_amount" type="text" inputmode="numeric" placeholder="مبلغ" value="${amountFa}"></div>
+    <div class="form-row" id="bm_methodRow"><label style="font-size:13px;font-weight:600;color:var(--muted);">روش تقسیم:</label><select id="bm_method"><option value="equal" ${v.method === 'equal' ? 'selected' : ''}>تقسیم مساوی</option><option value="residents" ${v.method === 'residents' ? 'selected' : ''}>بر اساس نفرات</option><option value="area" ${v.method === 'area' ? 'selected' : ''}>بر اساس متراژ</option></select></div>
+    <div class="modal-actions"><button class="btn btn-secondary" onclick="${editing ? 'openBillModal()' : 'closeBillModal()'}">انصراف</button><button class="btn" onclick="saveBill(${editId || 'null'})">💾 ذخیره</button></div>`;
   setTimeout(() => {
     const amt = document.getElementById('bm_amount');
     if (amt) amt.addEventListener('input', () => { amt.value = toFa(amt.value.replace(/[^\d۰-۹٠-٩]/g, '')); });
     const fs = document.getElementById('bm_fundSource');
     if (fs) fs.addEventListener('change', toggleFundSourceRow);
+    initPdp('bm_date');
+    if (v.date) setPdpValue(document.getElementById('bm_date'), v.date);
     toggleFundSourceRow();
   }, 0);
 }
 function toggleFundSourceRow() {
   const type = document.getElementById('bm_type').value;
-  const row = document.getElementById('bm_fundSourceRow');
-  const methodRow = document.getElementById('bm_methodRow');
-  const hint = document.getElementById('bm_fundHint');
-  const fs = document.getElementById('bm_fundSource');
+  const row = document.getElementById('bm_fundSourceRow'); const methodRow = document.getElementById('bm_methodRow');
+  const hint = document.getElementById('bm_fundHint'); const fs = document.getElementById('bm_fundSource');
   if (!row || !hint) return;
   if (type !== 'عمرانی') { row.style.display = 'none'; if (methodRow) methodRow.style.display = ''; hint.innerHTML = ''; return; }
   row.style.display = '';
-  const fundData = getFundData();
-  const bal = fundData.balance;
+  const fundData = getFundData(); const bal = fundData.balance;
   const selected = fs ? fs.value : 'residents';
   if (selected === 'fund') {
     if (methodRow) methodRow.style.display = 'none';
-    hint.innerHTML = bal >= 0 
-      ? `<div class="fund-warning ok">💰 موجودی فعلی صندوق: <strong>${format(bal)} تومان</strong> — این هزینه از صندوق پرداخت خواهد شد.</div>`
-      : `<div class="fund-warning danger">⚠️ هشدار: موجودی صندوق منفی است (${format(bal)} تومان)!</div>`;
+    hint.innerHTML = bal >= 0 ? `<div class="fund-warning ok">💰 موجودی فعلی صندوق: <strong>${format(bal)} ت</strong></div>` : `<div class="fund-warning danger">⚠️ موجودی صندوق منفی است (${format(bal)} ت)!</div>`;
   } else {
     if (methodRow) methodRow.style.display = '';
-    hint.innerHTML = `<div class="fund-warning warn">💰 موجودی فعلی صندوق: <strong>${format(bal)} تومان</strong> — این هزینه بین اهالی تقسیم می‌شود.</div>`;
+    hint.innerHTML = `<div class="fund-warning warn">💰 موجودی فعلی صندوق: <strong>${format(bal)} ت</strong></div>`;
   }
 }
 function saveBill(editId) {
   if (units.length === 0) return alert('اول واحدها را اضافه کنید');
   const name = document.getElementById('bm_name').value.trim();
   const type = document.getElementById('bm_type').value;
-  const date = document.getElementById('bm_date').value;
+  const date = getPdpIso('bm_date');
   const amount = Math.round(Number(toEn(document.getElementById('bm_amount').value)));
   const method = document.getElementById('bm_method').value;
   const fundSourceEl = document.getElementById('bm_fundSource');
   const fundSource = (type === 'عمرانی' && fundSourceEl) ? fundSourceEl.value : 'residents';
   if (!name) return alert('نام قبض را وارد کنید');
-  if (!date) {
-    if (!confirm('تاریخ قبض خالی است. بدون تاریخ، این قبض همیشه در گزارش اهالی نمایش داده می‌شود (قانون ۱۰ روزه اعمال نمی‌شود). با این حال ذخیره شود؟')) return;
-  }
+  if (!date) { if (!confirm('تاریخ قبض خالی است. بدون تاریخ، همیشه در گزارش نمایش داده می‌شود. ذخیره شود؟')) return; }
   if (!amount || amount <= 0) return alert('مبلغ قبض را وارد کنید');
   let shares = {};
   if (fundSource === 'fund') { units.forEach(u => { shares[u.id] = 0; }); }
@@ -1017,41 +974,30 @@ function saveBill(editId) {
     units.forEach((u, i) => { shares[u.id] = arr[i]; });
   }
   const billData = { name, type, date, amount, method, shares, fundSource };
-  if (editId) {
-    const idx = bills.findIndex(b => b.id === editId);
-    if (idx !== -1) bills[idx] = { ...bills[idx], ...billData };
-  } else {
-    bills.push({ id: Date.now(), ...billData });
-  }
+  if (editId) { const idx = bills.findIndex(b => b.id === editId); if (idx !== -1) bills[idx] = { ...bills[idx], ...billData }; }
+  else bills.push({ id: Date.now(), ...billData });
   save(); closeBillModal(); render();
 }
-function removeBill(id) {
-  if (!confirm('این قبض حذف شود؟')) return;
-  bills = bills.filter(b => b.id !== id);
-  save(); render();
-}
+function removeBill(id) { if (!confirm('این قبض حذف شود؟')) return; bills = bills.filter(b => b.id !== id); save(); render(); }
+
 function addPayment() {
   const unitId = Number(document.getElementById('paymentUnit').value);
-  const date = document.getElementById('paymentDate').value;
+  const date = getPdpIso('paymentDate');
   const amount = Math.round(Number(toEn(document.getElementById('paymentAmount').value)));
-  if (!unitId || !amount || amount <= 0) return alert('واحد و مبلغ پرداختی را وارد کنید');
+  if (!unitId || !amount || amount <= 0) return alert('واحد و مبلغ را وارد کنید');
   const unit = units.find(u => u.id === unitId);
   payments.push({ id: Date.now(), unitId, date, amount, type: selectedPayType });
-  const newBalance = getUnitBalance(unitId).balance;
-  let messages = [];
-  if (newBalance > 0) messages.push(`✅ واحد «${unit ? unit.name : ''}» بستانکار شد: +${format(newBalance)} تومان`);
-  else if (newBalance === 0) messages.push(`✅ واحد «${unit ? unit.name : ''}» به طور کامل تسویه شد.`);
-  else messages.push(`ℹ️ مانده واحد «${unit ? unit.name : ''}»: −${format(Math.abs(newBalance))} تومان (بدهکار)`);
+  const nb = getUnitBalance(unitId).balance;
+  let msgs = [];
+  if (nb > 0) msgs.push(`✅ ${unit?.name} بستانکار شد: +${format(nb)} ت`);
+  else if (nb === 0) msgs.push(`✅ ${unit?.name} تسویه شد.`);
+  else msgs.push(`ℹ️ ${unit?.name}: −${format(Math.abs(nb))} ت (بدهکار)`);
   document.getElementById('paymentAmount').value = '';
   selectPayType('regular');
   save(); render();
-  if (messages.length > 0) setTimeout(() => alert(messages.join('\n\n')), 100);
+  if (msgs.length) setTimeout(() => alert(msgs.join('\n\n')), 100);
 }
-function removePayment(id) {
-  if (!confirm('این پرداخت حذف شود؟')) return;
-  payments = payments.filter(p => p.id !== id);
-  save(); render();
-}
+function removePayment(id) { if (!confirm('این پرداخت حذف شود؟')) return; payments = payments.filter(p => p.id !== id); save(); render(); }
 function saveAdjustment() {
   const unitId = Number(document.getElementById('adjUnit').value);
   const type = document.getElementById('adjType').value;
@@ -1064,86 +1010,62 @@ function saveAdjustment() {
   save();
   document.getElementById('adjAmount').value = '';
   document.getElementById('adjNote').value = '';
-  render();
-  alert('✅ تعدیل ذخیره شد');
+  render(); alert('✅ تعدیل ذخیره شد');
 }
-function removeAdjustment(unitId) {
-  if (!confirm('این تعدیل حذف شود؟')) return;
-  delete adjustments[unitId];
-  save(); render();
-}
+function removeAdjustment(unitId) { if (!confirm('این تعدیل حذف شود؟')) return; delete adjustments[unitId]; save(); render(); }
 function togglePaid(unitId) {
   const { balance } = getUnitBalance(unitId);
-  if (balance < 0) { alert('این واحد هنوز بدهی دارد و نمی‌تواند به عنوان پرداخت‌شده علامت‌گذاری شود.'); return; }
+  if (balance < 0) { alert('این واحد بدهی دارد.'); return; }
   paidStatus[unitId] = !paidStatus[unitId];
   save();
-  const txt = document.getElementById('statusText_' + unitId);
-  const chk = document.getElementById('checkInput_' + unitId);
-  if (txt && chk) {
-    chk.checked = !!paidStatus[unitId];
-    if (paidStatus[unitId]) { txt.textContent = '✔ پرداخت شده'; txt.classList.add('paid'); }
-    else { txt.textContent = 'در انتظار پرداخت'; txt.classList.remove('paid'); }
-  }
+  const txt = document.getElementById('statusText_' + unitId); const chk = document.getElementById('checkInput_' + unitId);
+  if (txt && chk) { chk.checked = !!paidStatus[unitId]; if (paidStatus[unitId]) { txt.textContent = '✔ پرداخت شده'; txt.classList.add('paid'); } else { txt.textContent = 'در انتظار پرداخت'; txt.classList.remove('paid'); } }
 }
 function saveCardInfo() {
   let num = toEn(document.getElementById('cardNumber').value);
-  if (num && num.length !== 16) {
-    if (!confirm('شماره کارت معمولاً ۱۶ رقم است. با این حال ذخیره شود؟')) return;
-  }
-  let formatted = '';
-  for (let i = 0; i < num.length; i++) {
-    if (i > 0 && i % 4 === 0) formatted += '-';
-    formatted += num[i];
-  }
-  cardInfo.number = formatted;
-  cardInfo.holder = document.getElementById('cardHolder').value.trim();
-  save(); alert('✅ اطلاعات کارت ذخیره شد'); render();
+  if (num && num.length !== 16) { if (!confirm('شماره کارت معمولاً ۱۶ رقم است. ذخیره شود؟')) return; }
+  let formatted = ''; for (let i = 0; i < num.length; i++) { if (i > 0 && i % 4 === 0) formatted += '-'; formatted += num[i]; }
+  cardInfo.number = formatted; cardInfo.holder = document.getElementById('cardHolder').value.trim();
+  save(); alert('✅ ذخیره شد'); render();
 }
 function backupData() {
   const data = { units, bills, payments, paidStatus, adjustments, buildingName, cardInfo, theme: currentTheme, version: 3, date: new Date().toISOString() };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `backup-${buildingName}-${new Date().toISOString().slice(0,10)}.json`;
-  a.click(); URL.revokeObjectURL(url);
+  const a = document.createElement('a'); a.href = url; a.download = `backup-${buildingName}-${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url);
 }
 function restoreData(evt) {
-  const file = evt.target.files[0];
-  if (!file) return;
+  const file = evt.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
-      const data = JSON.parse(e.target.result);
-      if (!data.units) return alert('فایل نامعتبر است');
-      if (!confirm('اطلاعات فعلی با اطلاعات فایل پشتیبان جایگزین شود؟')) return;
+      const data = JSON.parse(e.target.result); if (!data.units) return alert('فایل نامعتبر');
+      if (!confirm('اطلاعات فعلی با فایل پشتیبان جایگزین شود؟')) return;
       units = data.units || []; bills = data.bills || []; payments = data.payments || [];
       paidStatus = data.paidStatus || {}; adjustments = data.adjustments || {};
-      buildingName = data.buildingName || 'ساختمان صدف';
-      cardInfo = data.cardInfo || { number: '', holder: '' };
+      buildingName = data.buildingName || 'ساختمان صدف'; cardInfo = data.cardInfo || { number: '', holder: '' };
       if (data.theme) applyTheme(data.theme);
-      save(); render(); alert('✅ بازیابی با موفقیت انجام شد');
-    } catch (err) { alert('❌ خطا در خواندن فایل: ' + err.message); }
+      save(); render(); alert('✅ بازیابی انجام شد');
+    } catch (err) { alert('❌ خطا: ' + err.message); }
   };
   reader.readAsText(file); evt.target.value = '';
 }
 function resetAllData() {
-  if (!confirm('آیا مطمئن هستید؟ تمام اطلاعات پاک خواهد شد!')) return;
-  if (!confirm('این عمل قابل بازگشت نیست. باز هم مطمئنید؟')) return;
+  if (!confirm('مطمئنید؟ تمام اطلاعات پاک خواهد شد!')) return;
+  if (!confirm('قابل بازگشت نیست!')) return;
   units = []; bills = []; payments = []; paidStatus = {}; adjustments = {};
-  buildingName = 'ساختمان صدف';
-  cardInfo = { number: '', holder: '' };
+  buildingName = 'ساختمان صدف'; cardInfo = { number: '', holder: '' };
   save(); render(); alert('تمام داده‌ها پاک شد');
 }
 function preparePrintLayout() {
-  const n = units.length;
-  let s = 1;
+  const n = units.length; let s = 1;
   if (n <= 5) s = 1.15; else if (n <= 8) s = 1.05; else if (n <= 12) s = 0.95;
   else if (n <= 16) s = 0.85; else if (n <= 22) s = 0.75; else if (n <= 30) s = 0.65; else s = 0.55;
   document.documentElement.style.setProperty('--print-scale', s);
 }
 window.addEventListener('beforeprint', preparePrintLayout);
 
+/* ================= Render Main ================= */
 function render() {
   syncPaidStatus();
   preparePrintLayout();
@@ -1152,6 +1074,7 @@ function render() {
   document.title = 'مدیریت هزینه‌ها • ' + buildingName;
   document.getElementById('cardNumber').value = cardInfo.number || '';
   document.getElementById('cardHolder').value = cardInfo.holder || '';
+
   const totalBills = bills.reduce((s, b) => s + b.amount, 0);
   const totalPaid = payments.reduce((s, p) => s + p.amount, 0);
   const waterTotal = bills.filter(b => b.type === 'آب').reduce((s, b) => s + b.amount, 0);
@@ -1159,16 +1082,12 @@ function render() {
   const buildingTotal = bills.filter(b => b.type === 'ساختمان').reduce((s, b) => s + b.amount, 0);
   const constructionTotal = bills.filter(b => b.type === 'عمرانی').reduce((s, b) => s + b.amount, 0);
   let totalDebt = 0, totalCredit = 0, debtorCount = 0, creditorCount = 0;
-  units.forEach(u => {
-    const { balance } = getUnitBalance(u.id);
-    if (balance < 0) { totalDebt += Math.abs(balance); debtorCount++; }
-    else if (balance > 0) { totalCredit += balance; creditorCount++; }
-  });
+  units.forEach(u => { const { balance } = getUnitBalance(u.id); if (balance < 0) { totalDebt += Math.abs(balance); debtorCount++; } else if (balance > 0) { totalCredit += balance; creditorCount++; } });
   document.getElementById('statsGrid').innerHTML = `
     <div class="stat-card"><div class="label">تعداد واحدها</div><div class="value">${toFa(units.length)} <small>واحد</small></div></div>
     <div class="stat-card orange"><div class="label">جمع کل هزینه‌ها</div><div class="value">${format(totalBills)} <small>تومان</small></div></div>
     <div class="stat-card green"><div class="label">جمع پرداختی‌ها</div><div class="value">+${format(totalPaid)} <small>تومان</small></div></div>
-    <div class="stat-card red"><div class="label">جمع بدهی واحدها</div><div class="value">−${format(totalDebt)} <small>تومان</small></div></div>
+    <div class="stat-card red"><div class="label">جمع بدهی</div><div class="value">−${format(totalDebt)} <small>تومان</small></div></div>
     <div class="stat-card green"><div class="label">جمع بستانکاری</div><div class="value">+${format(totalCredit)} <small>تومان</small></div></div>
     <div class="stat-card red"><div class="label">🔴 بدهکاران</div><div class="value">${toFa(debtorCount)} <small>واحد</small></div></div>
     <div class="stat-card green"><div class="label">🟢 بستانکاران</div><div class="value">${toFa(creditorCount)} <small>واحد</small></div></div>
@@ -1176,351 +1095,460 @@ function render() {
     <div class="stat-card"><div class="label">🔥 گاز</div><div class="value">${format(gasTotal)} <small>تومان</small></div></div>
     <div class="stat-card"><div class="label">🏢 ساختمان</div><div class="value">${format(buildingTotal)} <small>تومان</small></div></div>
     <div class="stat-card"><div class="label">🔨 عمرانی</div><div class="value">${format(constructionTotal)} <small>تومان</small></div></div>`;
+
   const fundData = getFundData();
-  const fundStats = document.getElementById('fundStats');
-  const fundStatus = document.getElementById('fundStatusMsg');
   const balClass = fundData.balance >= 0 ? '' : 'negative';
-  fundStats.innerHTML = `
-    <div class="stat-card fund ${balClass}"><div class="label">💰 موجودی فعلی صندوق</div><div class="value">${format(fundData.balance)} <small>تومان</small></div></div>
-    <div class="stat-card green"><div class="label">📥 واریز شده به صندوق</div><div class="value">${format(fundData.income)} <small>تومان</small></div></div>
-    <div class="stat-card red"><div class="label">📤 جمع برداشتی</div><div class="value">${format(fundData.withdrawals)} <small>تومان</small></div></div>
-    <div class="stat-card orange"><div class="label">⏳ سهم ساختمان پرداخت‌نشده</div><div class="value">${format(fundData.pendingBuilding)} <small>تومان</small></div></div>`;
+  document.getElementById('fundStats').innerHTML = `
+    <div class="stat-card fund ${balClass}"><div class="label">💰 موجودی صندوق</div><div class="value">${format(fundData.balance)} <small>تومان</small></div></div>
+    <div class="stat-card green"><div class="label">📥 واریز شده</div><div class="value">${format(fundData.income)} <small>تومان</small></div></div>
+    <div class="stat-card red"><div class="label">📤 برداشت</div><div class="value">${format(fundData.withdrawals)} <small>تومان</small></div></div>
+    <div class="stat-card orange"><div class="label">⏳ پرداخت‌نشده</div><div class="value">${format(fundData.pendingBuilding)} <small>تومان</small></div></div>`;
   let statusParts = [];
   if (fundData.balance < 0) statusParts.push(`<div class="fund-warning danger">⚠️ موجودی صندوق منفی است.</div>`);
   else if (fundData.balance > 0 && fundData.withdrawals > 0) statusParts.push(`<div class="fund-warning ok">✅ صندوق دارای موجودی مناسب است.</div>`);
-  if (fundData.pendingBuilding > 0) statusParts.push(`<div class="fund-warning warn">⏳ مبلغ <strong>${format(fundData.pendingBuilding)} تومان</strong> از سهم ساختمان اهالی هنوز پرداخت نشده است.</div>`);
-  else if (fundData.totalBuildingShare > 0 && fundData.income > 0) statusParts.push(`<div class="fund-warning info">✅ تمام سهم ساختمان اهالی وصول شده است.</div>`);
-  fundStatus.innerHTML = statusParts.join('');
-  document.getElementById('unitsTable').innerHTML =
-    `<thead><tr><th>نام واحد</th><th>نفرات</th><th>متراژ</th><th>موبایل</th><th>عملیات</th></tr></thead><tbody>` +
-    (units.length ? units.map(u => `<tr>
-      <td>${esc(u.name)}</td><td>${toFa(u.residents)}</td><td>${toFa(u.area)}</td>
-      <td style="font-size:12px;">${u.phone ? toFa(u.phone) : '—'}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="removeUnit(${u.id})">حذف</button></td>
-    </tr>`).join('') : `<tr><td colspan="5" class="empty">هنوز واحدی اضافه نشده است</td></tr>`) + `</tbody>`;
+  if (fundData.pendingBuilding > 0) statusParts.push(`<div class="fund-warning warn">⏳ ${format(fundData.pendingBuilding)} ت از سهم ساختمان پرداخت نشده.</div>`);
+  else if (fundData.totalBuildingShare > 0 && fundData.income > 0) statusParts.push(`<div class="fund-warning info">✅ تمام سهم ساختمان وصول شده.</div>`);
+  document.getElementById('fundStatusMsg').innerHTML = statusParts.join('');
+
+  document.getElementById('unitsTable').innerHTML = `<thead><tr><th>نام واحد</th><th>نفرات</th><th>متراژ</th><th>موبایل</th><th>عملیات</th></tr></thead><tbody>` +
+    (units.length ? units.map(u => `<tr><td>${esc(u.name)}</td><td>${toFa(u.residents)}</td><td>${toFa(u.area)}</td><td style="font-size:12px;">${u.phone ? toFa(u.phone) : '—'}</td><td><button class="btn btn-danger btn-sm" onclick="removeUnit(${u.id})">حذف</button></td></tr>`).join('') : `<tr><td colspan="5" class="empty">هنوز واحدی اضافه نشده</td></tr>`) + `</tbody>`;
 
   const recentCount = bills.filter(isBillRecent).length;
   const oldCount = bills.length - recentCount;
-  const filterBar = document.getElementById('billFilterBar');
-  if (filterBar) {
-    filterBar.innerHTML = `
-      <button class="bill-filter-btn ${billFilter === 'all' ? 'active' : ''}" onclick="setBillFilter('all')" type="button">
-        📋 همه <span class="count">${toFa(bills.length)}</span>
-      </button>
-      <button class="bill-filter-btn ${billFilter === 'recent' ? 'active' : ''}" onclick="setBillFilter('recent')" type="button" title="بر اساس تاریخ خود قبض">
-        🆕 ۱۰ روز اخیر <span class="count">${toFa(recentCount)}</span>
-      </button>
-      <button class="bill-filter-btn ${billFilter === 'old' ? 'active' : ''}" onclick="setBillFilter('old')" type="button" title="بر اساس تاریخ خود قبض">
-        📦 قدیمی‌تر از ۱۰ روز <span class="count">${toFa(oldCount)}</span>
-      </button>`;
-  }
+  document.getElementById('billFilterBar').innerHTML = `
+    <button class="bill-filter-btn ${billFilter === 'all' ? 'active' : ''}" onclick="setBillFilter('all')" type="button">📋 همه <span class="count">${toFa(bills.length)}</span></button>
+    <button class="bill-filter-btn ${billFilter === 'recent' ? 'active' : ''}" onclick="setBillFilter('recent')" type="button">🆕 ۱۰ روز اخیر <span class="count">${toFa(recentCount)}</span></button>
+    <button class="bill-filter-btn ${billFilter === 'old' ? 'active' : ''}" onclick="setBillFilter('old')" type="button">📦 قدیمی‌تر <span class="count">${toFa(oldCount)}</span></button>`;
 
   const filteredBills = getFilteredBills();
-  document.getElementById('billsTable').innerHTML =
-    `<thead><tr><th>وضعیت</th><th>نوع</th><th>نام قبض</th><th>تاریخ قبض</th><th>مبلغ</th><th>منبع/روش</th><th>عملیات</th></tr></thead><tbody>` +
-    (filteredBills.length ? filteredBills.map(b => {
-      const t = BILL_TYPES[b.type] || BILL_TYPES['ساختمان'];
-      const isFund = b.fundSource === 'fund';
-      const sourceText = isFund ? '<span class="badge badge-fund">💰 از صندوق</span>' : methodName(b.method);
-      return `<tr>
-        <td>${billStatusBadge(b)}</td>
-        <td><span class="badge ${t.badge}">${t.icon} ${esc(b.type)}</span></td>
-        <td style="font-weight:600;">${esc(b.name || b.title || '—')}</td>
-        <td>${formatDate(b.date)}</td>
-        <td class="amount">${format(b.amount)}</td>
-        <td>${sourceText}</td>
-        <td style="white-space:nowrap;">
-          <button class="btn btn-sm" onclick="openBillModal(${b.id})" style="padding:4px 8px;font-size:11.5px;">✏️</button>
-          <button class="btn btn-danger btn-sm" onclick="removeBill(${b.id})" style="padding:4px 8px;font-size:11.5px;">🗑️</button>
-        </td></tr>`;
-    }).join('') : `<tr><td colspan="7" class="empty">${bills.length === 0 ? 'هنوز قبضی ثبت نشده است' : 'در این بازه قبضی وجود ندارد'}</td></tr>`) + `</tbody>`;
+  document.getElementById('billsTable').innerHTML = `<thead><tr><th>وضعیت</th><th>نوع</th><th>نام قبض</th><th>تاریخ</th><th>مبلغ</th><th>منبع/روش</th><th>عملیات</th></tr></thead><tbody>` +
+    (filteredBills.length ? filteredBills.map(b => { const t = BILL_TYPES[b.type] || BILL_TYPES['ساختمان']; const isFund = b.fundSource === 'fund'; const sourceText = isFund ? '<span class="badge badge-fund">💰 صندوق</span>' : methodName(b.method);
+      return `<tr><td>${billStatusBadge(b)}</td><td><span class="badge ${t.badge}">${t.icon} ${esc(b.type)}</span></td><td style="font-weight:600;">${esc(b.name || b.title || '—')}</td><td>${formatDate(b.date)}</td><td class="amount">${format(b.amount)}</td><td>${sourceText}</td><td style="white-space:nowrap;"><button class="btn btn-sm" onclick="openBillModal(${b.id})" style="padding:4px 8px;font-size:11.5px;">✏️</button><button class="btn btn-danger btn-sm" onclick="removeBill(${b.id})" style="padding:4px 8px;font-size:11.5px;">🗑️</button></td></tr>`;
+    }).join('') : `<tr><td colspan="7" class="empty">${bills.length === 0 ? 'هنوز قبضی ثبت نشده' : 'در این بازه قبضی نیست'}</td></tr>`) + `</tbody>`;
 
-  const sel = document.getElementById('paymentUnit');
-  const prevVal = sel.value;
+  const sel = document.getElementById('paymentUnit'); const prevVal = sel.value;
   sel.innerHTML = units.length ? units.map(u => `<option value="${u.id}">${esc(u.name)}</option>`).join('') : '<option value="">—</option>';
   if (prevVal) sel.value = prevVal;
-  document.getElementById('paymentsTable').innerHTML =
-    `<thead><tr><th>واحد</th><th>تاریخ</th><th>مبلغ</th><th>نوع واریز</th><th>عملیات</th></tr></thead><tbody>` +
-    (payments.length ? payments.map(p => {
-      const u = units.find(x => x.id === p.unitId);
-      const isBuilding = p.type === 'building';
-      return `<tr>
-        <td>${u ? esc(u.name) : '?'}</td>
-        <td>${formatDate(p.date)}</td>
-        <td class="amount" style="color:var(--success);">+${format(p.amount)}</td>
-        <td>${isBuilding ? '<span class="badge badge-payment-building">🏢 صندوق ساختمان</span>' : '<span class="badge badge-payment-regular">💵 پرداخت عادی</span>'}</td>
-        <td><button class="btn btn-danger btn-sm" onclick="removePayment(${p.id})" style="padding:4px 8px;font-size:11.5px;">🗑️</button></td>
-      </tr>`;
-    }).join('') : `<tr><td colspan="5" class="empty">هنوز پرداختی ثبت نشده است</td></tr>`) + `</tbody>`;
-  const adjSel = document.getElementById('adjUnit');
-  const prevAdj = adjSel.value;
+  document.getElementById('paymentsTable').innerHTML = `<thead><tr><th>واحد</th><th>تاریخ</th><th>مبلغ</th><th>نوع واریز</th><th>عملیات</th></tr></thead><tbody>` +
+    (payments.length ? payments.map(p => { const u = units.find(x => x.id === p.unitId); const isBuilding = p.type === 'building';
+      return `<tr><td>${u ? esc(u.name) : '?'}</td><td>${formatDate(p.date)}</td><td class="amount" style="color:var(--success);">+${format(p.amount)}</td><td>${isBuilding ? '<span class="badge badge-payment-building">🏢 صندوق</span>' : '<span class="badge badge-payment-regular">💵 عادی</span>'}</td><td><button class="btn btn-danger btn-sm" onclick="removePayment(${p.id})" style="padding:4px 8px;font-size:11.5px;">🗑️</button></td></tr>`;
+    }).join('') : `<tr><td colspan="5" class="empty">هنوز پرداختی ثبت نشده</td></tr>`) + `</tbody>`;
+
+  const adjSel = document.getElementById('adjUnit'); const prevAdj = adjSel.value;
   adjSel.innerHTML = units.length ? units.map(u => `<option value="${u.id}">${esc(u.name)}</option>`).join('') : '<option value="">—</option>';
   if (prevAdj) adjSel.value = prevAdj;
   const adjRows = units.length ? units.map(u => {
-    const b = getUnitBalance(u.id);
-    const manualAdj = adjustments[u.id];
-    const hasManual = !!manualAdj;
-    const isManualDebt = hasManual && manualAdj.amount > 0;
-    const isManualCredit = hasManual && manualAdj.amount < 0;
-    const finalBalance = b.balance;
+    const b = getUnitBalance(u.id); const ma = adjustments[u.id];
+    const isDebt = ma && ma.amount > 0, isCredit = ma && ma.amount < 0;
     let adjBadges = '';
-    if (isManualDebt) {
-      adjBadges += `<span class="calc-badge badge-manual-debt">
-        🔴 بدهکار دستی: −${format(manualAdj.amount)}
-        <button class="del-x" onclick="removeAdjustment(${u.id})" title="حذف تعدیل">×</button>
-      </span>`;
-    }
-    if (isManualCredit) {
-      adjBadges += `<span class="calc-badge badge-manual-credit">
-        🟢 بستانکار دستی: +${format(Math.abs(manualAdj.amount))}
-        <button class="del-x" onclick="removeAdjustment(${u.id})" title="حذف تعدیل">×</button>
-      </span>`;
-    }
-    if (!adjBadges) adjBadges = '<span class="calc-empty">— بدون تعدیل —</span>';
-    let balanceDisplay;
-    if (finalBalance > 0) {
-      balanceDisplay = `<span style="color:var(--success);">+${format(finalBalance)}</span><span class="balance-label credit">🟢 بستانکار</span>`;
-    } else if (finalBalance < 0) {
-      balanceDisplay = `<span style="color:var(--danger);">−${format(Math.abs(finalBalance))}</span><span class="balance-label debt">🔴 بدهکار</span>`;
-    } else {
-      balanceDisplay = `<span style="color:var(--muted);">${toFa('۰')}</span><span class="balance-label settled">✅ تسویه</span>`;
-    }
-    let formulaParts = [`+${format(b.totalPaid)}`, `−${format(b.totalShare)}`];
-    if (isManualDebt) formulaParts.push(`−${format(manualAdj.amount)}`);
-    if (isManualCredit) formulaParts.push(`+${format(Math.abs(manualAdj.amount))}`);
-    const resSign = finalBalance > 0 ? '+' : finalBalance < 0 ? '−' : '';
-    const formula = formulaParts.join(' ') + ' = ' + resSign + format(Math.abs(finalBalance));
-    return `<tr>
-      <td style="font-weight:800;">${esc(u.name)}</td>
-      <td class="amount col-share">−${format(b.totalShare)}</td>
-      <td class="amount col-paid">+${format(b.totalPaid)}</td>
-      <td style="text-align:right;">${adjBadges}</td>
-      <td class="amount" style="font-weight:800;">${balanceDisplay}
-        <span class="calc-formula">${formula}</span>
-      </td>
-    </tr>`;
-  }).join('') : `<tr><td colspan="5" class="empty">هنوز واحدی اضافه نشده است</td></tr>`;
-  document.getElementById('adjustmentsTable').innerHTML =
-    `<thead><tr>
-      <th>واحد</th>
-      <th>حق سهم / بدهی (−)</th>
-      <th>پرداختی (+)</th>
-      <th>تعدیلات</th>
-      <th>مانده</th>
-    </tr></thead><tbody>${adjRows}</tbody>`;
+    if (isDebt) adjBadges += `<span class="calc-badge badge-manual-debt">🔴 ${format(ma.amount)} <button class="del-x" onclick="removeAdjustment(${u.id})">×</button></span>`;
+    if (isCredit) adjBadges += `<span class="calc-badge badge-manual-credit">🟢 ${format(Math.abs(ma.amount))} <button class="del-x" onclick="removeAdjustment(${u.id})">×</button></span>`;
+    if (!adjBadges) adjBadges = '<span class="calc-empty">—</span>';
+    const f = b.balance; let bd;
+    if (f > 0) bd = `<span style="color:var(--success);">+${format(f)}</span><span class="balance-label credit">🟢 بستانکار</span>`;
+    else if (f < 0) bd = `<span style="color:var(--danger);">−${format(Math.abs(f))}</span><span class="balance-label debt">🔴 بدهکار</span>`;
+    else bd = `<span style="color:var(--muted);">۰</span><span class="balance-label settled">✅ تسویه</span>`;
+    let fp = [`+${format(b.totalPaid)}`, `−${format(b.totalShare)}`];
+    if (isDebt) fp.push(`−${format(ma.amount)}`); if (isCredit) fp.push(`+${format(Math.abs(ma.amount))}`);
+    const rs = f > 0 ? '+' : f < 0 ? '−' : '';
+    return `<tr><td style="font-weight:800;">${esc(u.name)}</td><td class="amount col-share">−${format(b.totalShare)}</td><td class="amount col-paid">+${format(b.totalPaid)}</td><td style="text-align:right;">${adjBadges}</td><td class="amount" style="font-weight:800;">${bd}<span class="calc-formula">${fp.join(' ')} = ${rs}${format(Math.abs(f))}</span></td></tr>`;
+  }).join('') : `<tr><td colspan="5" class="empty">هنوز واحدی اضافه نشده</td></tr>`;
+  document.getElementById('adjustmentsTable').innerHTML = `<thead><tr><th>واحد</th><th>سهم / بدهی (−)</th><th>پرداختی (+)</th><th>تعدیلات</th><th>مانده</th></tr></thead><tbody>${adjRows}</tbody>`;
+
   renderReport();
 }
 
-/* ================ گزارش اهالی ================ */
+/* ================= Resident Report ================= */
 function renderReport() {
   document.getElementById('reportDate').textContent = todayFa();
   document.getElementById('reportUnitsCount').textContent = toFa(units.length);
   const fundData = getFundData();
-  const billInfoBox = document.getElementById('billInfoBox');
-
   const recentBills = bills.filter(isBillRecent);
   const oldBills = bills.filter(b => !isBillRecent(b));
   const recentTotal = recentBills.reduce((s, b) => s + b.amount, 0);
   const oldTotal = oldBills.reduce((s, b) => s + b.amount, 0);
   const unknownDateCount = bills.filter(b => billDaysSince(b) === null).length;
+  const billInfoBox = document.getElementById('billInfoBox');
 
   if (recentBills.length === 0) {
-    billInfoBox.innerHTML = `
-      <h3>📋 هزینه‌های اخیر (۱۰ روز گذشته)</h3>
-      <div class="empty" style="padding:10px;">قبض جدیدی با تاریخ ۱۰ روز اخیر ثبت نشده است</div>
-      ${oldBills.length > 0 ? `
-        <div class="bill-info-banner warn">
-          ⚠️ ${toFa(oldBills.length)} قبض با تاریخ قدیمی‌تر از ۱۰ روز (جمع ${format(oldTotal)} تومان) در این گزارش <strong>نمایش داده نشده</strong> است، اما سهم آن‌ها در محاسبه بدهی/بستانکاری واحدها لحاظ شده است.
-        </div>` : ''}
-      ${unknownDateCount > 0 ? `
-        <div class="bill-info-banner warn" style="margin-top:6px;">
-          ❓ ${toFa(unknownDateCount)} قبض بدون تاریخ ثبت شده که همیشه نمایش داده می‌شود. لطفاً تاریخ آن‌ها را در سیستم تکمیل کنید.
-        </div>` : ''}`;
+    billInfoBox.innerHTML = `<h3>📋 هزینه‌های اخیر</h3><div class="empty" style="padding:10px;">قبض جدیدی در ۱۰ روز اخیر ثبت نشده</div>
+      ${oldBills.length > 0 ? `<div class="bill-info-banner warn">⚠️ ${toFa(oldBills.length)} قبض قدیمی (جمع ${format(oldTotal)} ت) نمایش داده نشد، اما در محاسبه بدهی لحاظ شده.</div>` : ''}
+      ${unknownDateCount > 0 ? `<div class="bill-info-banner warn">❓ ${toFa(unknownDateCount)} قبض بدون تاریخ همیشه نمایش داده می‌شود.</div>` : ''}`;
   } else {
-    const items = recentBills.map(b => {
-      const t = BILL_TYPES[b.type] || BILL_TYPES['ساختمان'];
-      const isFund = b.fundSource === 'fund';
-      return `<div class="bill-info-item ${isFund ? 'fund-item' : ''}">
-        <span class="k">${t.icon} ${esc(b.name || b.title || b.type)} ${isFund ? '💰' : ''}</span>
-        <span class="v">${format(b.amount)} ت</span>
-      </div>`;
+    const items = recentBills.map(b => { const t = BILL_TYPES[b.type] || BILL_TYPES['ساختمان']; const isFund = b.fundSource === 'fund';
+      return `<div class="bill-info-item ${isFund ? 'fund-item' : ''}"><span class="k">${t.icon} ${esc(b.name || b.type)} ${isFund ? '💰' : ''}</span><span class="v">${format(b.amount)} ت</span></div>`;
     }).join('');
-    billInfoBox.innerHTML = `
-      <h3>📋 هزینه‌های ۱۰ روز اخیر (بر اساس تاریخ قبض)</h3>
-      <div class="bill-info-grid">
-        ${items}
-        <div class="bill-info-item" style="background:var(--primary-lighter);border-color:var(--primary-light);">
-          <span class="k" style="color:var(--primary-dark);font-weight:800;">جمع این دوره</span>
-          <span class="v" style="color:var(--primary-dark);">${format(recentTotal)} تومان</span>
-        </div>
-      </div>
-      ${oldBills.length > 0 ? `
-        <div class="bill-info-banner warn" style="margin-top:8px;margin-bottom:0;">
-          ⚠️ ${toFa(oldBills.length)} قبض با تاریخ قدیمی‌تر از ۱۰ روز (جمع ${format(oldTotal)} تومان) در این گزارش <strong>نمایش داده نشده</strong> است، اما سهم آن‌ها در محاسبه بدهی/بستانکاری واحدها لحاظ شده است.
-        </div>` : ''}
-      ${unknownDateCount > 0 ? `
-        <div class="bill-info-banner warn" style="margin-top:6px;margin-bottom:0;">
-          ❓ ${toFa(unknownDateCount)} قبض بدون تاریخ، همیشه نمایش داده می‌شود. لطفاً تاریخ آن‌ها را تکمیل کنید.
-        </div>` : ''}`;
+    billInfoBox.innerHTML = `<h3>📋 هزینه‌های ۱۰ روز اخیر</h3>
+      <div class="bill-info-grid">${items}<div class="bill-info-item" style="background:var(--primary-lighter);border-color:var(--primary-light);"><span class="k" style="color:var(--primary-dark);font-weight:800;">جمع این دوره</span><span class="v" style="color:var(--primary-dark);">${format(recentTotal)} ت</span></div></div>
+      ${oldBills.length > 0 ? `<div class="bill-info-banner warn" style="margin-top:8px;margin-bottom:0;">⚠️ ${toFa(oldBills.length)} قبض قدیمی (${format(oldTotal)} ت) نمایش داده نشد.</div>` : ''}
+      ${unknownDateCount > 0 ? `<div class="bill-info-banner warn" style="margin-top:6px;margin-bottom:0;">❓ ${toFa(unknownDateCount)} قبض بدون تاریخ همیشه نمایش داده می‌شود.</div>` : ''}`;
   }
 
   const reportArea = document.getElementById('reportArea');
-  if (units.length === 0) {
-    reportArea.innerHTML = `<div class="empty">برای نمایش صورت‌حساب ابتدا واحدها را اضافه کنید</div>`;
-    return;
-  }
+  if (units.length === 0) { reportArea.innerHTML = `<div class="empty">ابتدا واحدها را اضافه کنید</div>`; return; }
 
   let rows = '', sumBalance = 0, paidCount = 0;
   const debtors = [], creditors = [], settled = [];
-
+  const checkSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
   units.forEach(u => {
     const { balance } = getUnitBalance(u.id);
     sumBalance += balance;
-    const isPaid = !!paidStatus[u.id];
-    if (isPaid) paidCount++;
-
+    const isPaid = !!paidStatus[u.id]; if (isPaid) paidCount++;
     let amountDisplay, statusLabelHTML, hasDebt = balance < 0;
-
-    if (balance < 0) {
-      amountDisplay = `−${format(Math.abs(balance))}`;
-      statusLabelHTML = '<span class="balance-label manual-debt">🔴 پرداخت نشده</span>';
-      debtors.push({ name: u.name, amount: Math.abs(balance) });
-    } else if (balance > 0) {
-      amountDisplay = `+${format(balance)}`;
-      statusLabelHTML = '<span class="balance-label credit">🟢 بستانکار</span>';
-      creditors.push({ name: u.name, amount: balance });
-    } else {
-      amountDisplay = toFa('۰');
-      statusLabelHTML = '<span class="balance-label settled">✅ تسویه</span>';
-      settled.push({ name: u.name });
-    }
-
-    const checkSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+    if (balance < 0) { amountDisplay = `−${format(Math.abs(balance))}`; statusLabelHTML = '<span class="balance-label manual-debt">🔴 پرداخت نشده</span>'; debtors.push({ name: u.name, amount: Math.abs(balance) }); }
+    else if (balance > 0) { amountDisplay = `+${format(balance)}`; statusLabelHTML = '<span class="balance-label credit">🟢 بستانکار</span>'; creditors.push({ name: u.name, amount: balance }); }
+    else { amountDisplay = toFa('۰'); statusLabelHTML = '<span class="balance-label settled">✅ تسویه</span>'; settled.push({ name: u.name }); }
     let checkHTML, statusHTML;
-    if (hasDebt) {
-      checkHTML = `<label class="check-wrap disabled" title="این واحد بدهی دارد">
-          <input type="checkbox" id="checkInput_${u.id}" disabled>
-          <span class="check-box">${checkSvg}</span>
-        </label>`;
-      statusHTML = '';
-    } else {
-      checkHTML = `<label class="check-wrap" onclick="event.preventDefault(); togglePaid(${u.id});">
-          <input type="checkbox" id="checkInput_${u.id}" ${isPaid ? 'checked' : ''}>
-          <span class="check-box">${checkSvg}</span>
-        </label>`;
-      statusHTML = `<span class="status-text ${isPaid ? 'paid' : ''}" id="statusText_${u.id}">
-          ${isPaid ? '✔ پرداخت شده' : 'در انتظار پرداخت'}
-        </span>`;
-    }
-
-    rows += `<tr>
-      <td style="font-weight:800;">${esc(u.name)}</td>
-      <td class="amount ${balanceClass(balance)}" style="font-weight:800;">${amountDisplay}</td>
-      <td>${statusLabelHTML}</td>
-      <td>${checkHTML}${statusHTML}</td>
-    </tr>`;
+    if (hasDebt) { checkHTML = `<label class="check-wrap disabled"><input type="checkbox" id="checkInput_${u.id}" disabled><span class="check-box">${checkSvg}</span></label>`; statusHTML = ''; }
+    else { checkHTML = `<label class="check-wrap" onclick="event.preventDefault(); togglePaid(${u.id});"><input type="checkbox" id="checkInput_${u.id}" ${isPaid ? 'checked' : ''}><span class="check-box">${checkSvg}</span></label>`; statusHTML = `<span class="status-text ${isPaid ? 'paid' : ''}" id="statusText_${u.id}">${isPaid ? '✔ پرداخت شده' : 'در انتظار پرداخت'}</span>`; }
+    rows += `<tr><td style="font-weight:800;">${esc(u.name)}</td><td class="amount ${balanceClass(balance)}" style="font-weight:800;">${amountDisplay}</td><td>${statusLabelHTML}</td><td>${checkHTML}${statusHTML}</td></tr>`;
   });
 
-  let summaryHTML = `<div class="balance-summary"><div class="title-sm">📊 خلاصه وضعیت مالی واحدها</div>`;
-  if (debtors.length > 0) {
-    summaryHTML += `<div class="s-item debtor"><span class="icon">🔴</span><strong>بدهکاران (${toFa(debtors.length)} واحد):</strong>
-      <span class="units-list">${debtors.map(d => `<span class="u-item">${esc(d.name)} <span class="amt">(−${format(d.amount)})</span></span>`).join('')}</span></div>`;
-  }
-  if (creditors.length > 0) {
-    summaryHTML += `<div class="s-item creditor"><span class="icon">🟢</span><strong>بستانکاران (${toFa(creditors.length)} واحد):</strong>
-      <span class="units-list">${creditors.map(c => `<span class="u-item">${esc(c.name)} <span class="amt">(+${format(c.amount)})</span></span>`).join('')}</span></div>`;
-  }
-  if (settled.length > 0) {
-    summaryHTML += `<div class="s-item settled"><span class="icon">✅</span><strong>تسویه‌شده (${toFa(settled.length)} واحد):</strong>
-      <span class="units-list">${settled.map(s => `<span class="u-item">${esc(s.name)}</span>`).join('')}</span></div>`;
-  }
+  let summaryHTML = `<div class="balance-summary"><div class="title-sm">📊 خلاصه وضعیت</div>`;
+  if (debtors.length > 0) summaryHTML += `<div class="s-item debtor"><span class="icon">🔴</span><strong>بدهکاران (${toFa(debtors.length)}):</strong><span class="units-list">${debtors.map(d => `<span class="u-item">${esc(d.name)} <span class="amt">(−${format(d.amount)})</span></span>`).join('')}</span></div>`;
+  if (creditors.length > 0) summaryHTML += `<div class="s-item creditor"><span class="icon">🟢</span><strong>بستانکاران (${toFa(creditors.length)}):</strong><span class="units-list">${creditors.map(c => `<span class="u-item">${esc(c.name)} <span class="amt">(+${format(c.amount)})</span></span>`).join('')}</span></div>`;
+  if (settled.length > 0) summaryHTML += `<div class="s-item settled"><span class="icon">✅</span><strong>تسویه‌شده (${toFa(settled.length)}):</strong><span class="units-list">${settled.map(s => `<span class="u-item">${esc(s.name)}</span>`).join('')}</span></div>`;
   summaryHTML += `</div>`;
 
   const balCls = fundData.balance >= 0 ? '' : 'negative';
-  const fundReportBox = `
-    <div class="fund-report-box">
-      <div class="title-sm">💰 وضعیت صندوق ذخیره ساختمان</div>
-      <div class="fund-grid">
-        <div class="fund-item"><div class="lbl">📥 واریز به صندوق</div><div class="val">${format(fundData.income)}</div></div>
-        <div class="fund-item"><div class="lbl">📤 جمع برداشتی</div><div class="val">${format(fundData.withdrawals)}</div></div>
-        <div class="fund-item"><div class="lbl">⏳ پرداخت‌نشده</div><div class="val">${format(fundData.pendingBuilding)}</div></div>
-        <div class="fund-item balance ${balCls}"><div class="lbl">موجودی فعلی (تومان)</div><div class="val">${format(fundData.balance)}</div></div>
-      </div>
-    </div>`;
+  const fundReportBox = `<div class="fund-report-box"><div class="title-sm">💰 وضعیت صندوق</div><div class="fund-grid">
+    <div class="fund-item"><div class="lbl">📥 واریز</div><div class="val">${format(fundData.income)}</div></div>
+    <div class="fund-item"><div class="lbl">📤 برداشت</div><div class="val">${format(fundData.withdrawals)}</div></div>
+    <div class="fund-item"><div class="lbl">⏳ پرداخت‌نشده</div><div class="val">${format(fundData.pendingBuilding)}</div></div>
+    <div class="fund-item balance ${balCls}"><div class="lbl">موجودی (تومان)</div><div class="val">${format(fundData.balance)}</div></div>
+  </div></div>`;
 
-  const cardBoxHTML = (cardInfo.number || cardInfo.holder) ? `
-    <div class="payment-info-box">
-      <div class="title">💳 شماره کارت جهت واریز هزینه‌ها</div>
-      ${cardInfo.number ? `<div class="card-number">${esc(cardInfo.number)}</div>` : ''}
-      ${cardInfo.holder ? `<div class="holder">به نام: <span>${esc(cardInfo.holder)}</span></div>` : ''}
-    </div>` : '';
+  const cardBoxHTML = (cardInfo.number || cardInfo.holder) ? `<div class="payment-info-box"><div class="title">💳 شماره کارت جهت واریز</div>${cardInfo.number ? `<div class="card-number">${esc(cardInfo.number)}</div>` : ''}${cardInfo.holder ? `<div class="holder">به نام: <span>${esc(cardInfo.holder)}</span></div>` : ''}</div>` : '';
 
-  const sumBalanceDisplay = sumBalance > 0 ? `+${format(sumBalance)}`
-    : sumBalance < 0 ? `−${format(Math.abs(sumBalance))}` : toFa('۰');
-
+  const sumBalanceDisplay = sumBalance > 0 ? `+${format(sumBalance)}` : sumBalance < 0 ? `−${format(Math.abs(sumBalance))}` : toFa('۰');
   reportArea.innerHTML = `
-    <div class="table-wrap">
-      <table class="report-table">
-        <thead><tr>
-          <th>واحد</th>
-          <th>مانده (تومان)</th>
-          <th>وضعیت</th>
-          <th>پرداخت</th>
-        </tr></thead>
-        <tbody>
-          ${rows}
-          <tr class="total-row">
-            <td>جمع کل</td>
-            <td class="amount">${sumBalanceDisplay}</td>
-            <td colspan="2">${toFa(paidCount)} از ${toFa(units.length)} واحد پرداخت شده</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    ${summaryHTML}
-    ${fundReportBox}
-    ${cardBoxHTML}
-    <div class="report-footer">
-      این صورت‌حساب توسط مدیریت ${esc(buildingName)} تهیه شده است. در صورت مشاهده هرگونه مغایرت با مدیریت تماس حاصل فرمایید.
-      <div class="sign">
-        <div><div class="line">مهر و امضای مدیریت</div></div>
-        <div><div class="line">تاریخ و امضای دریافت‌کننده</div></div>
-      </div>
-    </div>`;
+    <div class="table-wrap"><table class="report-table"><thead><tr><th>واحد</th><th>مانده (تومان)</th><th>وضعیت</th><th>پرداخت</th></tr></thead><tbody>${rows}
+      <tr class="total-row"><td>جمع کل</td><td class="amount">${sumBalanceDisplay}</td><td colspan="2">${toFa(paidCount)} از ${toFa(units.length)} واحد پرداخت شده</td></tr></tbody></table></div>
+    ${summaryHTML}${fundReportBox}${cardBoxHTML}
+    <div class="report-footer">این صورت‌حساب توسط مدیریت ${esc(buildingName)} تهیه شده.<div class="sign"><div><div class="line">مهر و امضای مدیریت</div></div><div><div class="line">تاریخ و امضای دریافت‌کننده</div></div></div></div>`;
 }
+
+/* ================= Period helpers (JALALI) ================= */
+function parseDateObj(s) { if (!s) return null; const p = String(s).split('-'); if (p.length !== 3) return null; const dt = new Date(parseInt(p[0],10), parseInt(p[1],10)-1, parseInt(p[2],10)); if (isNaN(dt.getTime())) return null; dt.setHours(0,0,0,0); return dt; }
+function fmtDateObj(d) {
+  if (!d) return '—';
+  const iso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  return isoToJalaliStr(iso);
+}
+function inRange(ds, r) { const d = parseDateObj(ds); return d ? (d >= r.start && d <= r.end) : false; }
+
+// Jalali period helpers
+function jalaliAddMonths(jy, jm, delta) {
+  const total = jy * 12 + (jm - 1) + delta;
+  return [Math.floor(total / 12), (total % 12 + 12) % 12 + 1];
+}
+function jalaliRange(startJy, startJm, endJy, endJm) {
+  const [gsy, gsm, gsd] = j2g(startJy, startJm, 1);
+  const [gey, gem, ged] = j2g(endJy, endJm, daysInJMonth(endJy, endJm));
+  return {
+    start: new Date(gsy, gsm - 1, gsd, 0, 0, 0, 0),
+    end: new Date(gey, gem - 1, ged, 23, 59, 59, 999)
+  };
+}
+function jalaliRangeLabel(sJy, sJm, eJy, eJm) {
+  if (sJy === eJy) return `${PDP_MONTHS[sJm-1]} تا ${PDP_MONTHS[eJm-1]} ${toFa(sJy)}`;
+  return `${PDP_MONTHS[sJm-1]} ${toFa(sJy)} تا ${PDP_MONTHS[eJm-1]} ${toFa(eJy)}`;
+}
+function jalaliPeriods(months, refIso) {
+  const [gy, gm, gd] = refIso.split('-').map(Number);
+  const [jy, jm] = g2j(gy, gm, gd);
+
+  // Current: months (jm-(months-1))..jm
+  const [cSJy, cSJm] = jalaliAddMonths(jy, jm, -(months - 1));
+  const curr = jalaliRange(cSJy, cSJm, jy, jm);
+
+  // Previous: months (jm-(2*months-1))..(jm-months)
+  const [pSJy, pSJm] = jalaliAddMonths(jy, jm, -(2 * months - 1));
+  const [pEJy, pEJm] = jalaliAddMonths(jy, jm, -months);
+  const prev = jalaliRange(pSJy, pSJm, pEJy, pEJm);
+
+  // Last year: same months, year-1
+  const ly = jalaliRange(cSJy - 1, cSJm, jy - 1, jm);
+
+  return {
+    curr, prev, ly,
+    label: jalaliRangeLabel(cSJy, cSJm, jy, jm),
+    currStartJ: [cSJy, cSJm],
+    currEndJ: [jy, jm]
+  };
+}
+
+/* ================= Period calculations ================= */
+function calcPeriodData(range, filterTypes) {
+  const inBills = bills.filter(b => inRange(b.date, range) && (!filterTypes || filterTypes.includes(b.type)));
+  const inPays = payments.filter(p => inRange(p.date, range));
+  const byType = { 'آب': 0, 'گاز': 0, 'ساختمان': 0, 'عمرانی': 0 };
+  inBills.forEach(b => { if (byType[b.type] !== undefined) byType[b.type] += b.amount; });
+  const totalBills = inBills.reduce((s, b) => s + b.amount, 0);
+  const totalPayments = filterTypes ? 0 : inPays.reduce((s, p) => s + p.amount, 0);
+  const fundIncome = filterTypes ? 0 : inPays.filter(p => p.type === 'building').reduce((s, p) => s + p.amount, 0);
+  const fundWithdrawals = inBills.filter(b => b.fundSource === 'fund').reduce((s, b) => s + b.amount, 0);
+  return {
+    byType, totalBills,
+    totalPayments,
+    fundIncome, fundWithdrawals,
+    billCount: inBills.length,
+    paymentCount: filterTypes ? 0 : inPays.length,
+    netChange: totalPayments - totalBills
+  };
+}
+function getMonthlyBreakdown(range) {
+  // Build list of Jalali months in the range
+  const [sGy, sGm, sGd] = [range.start.getFullYear(), range.start.getMonth()+1, range.start.getDate()];
+  const [eGy, eGm, eGd] = [range.end.getFullYear(), range.end.getMonth()+1, range.end.getDate()];
+  const [sJy, sJm] = g2j(sGy, sGm, sGd);
+  const [eJy, eJm] = g2j(eGy, eGm, eGd);
+  const out = [];
+  let [jy, jm] = [sJy, sJm];
+  while (true) {
+    const [ny, nm] = jalaliAddMonths(jy, jm, 1);
+    const [gsy, gsm, gsd] = j2g(jy, jm, 1);
+    const [gey, gem, ged] = j2g(jy, jm, daysInJMonth(jy, jm));
+    const mStart = new Date(gsy, gsm-1, gsd, 0, 0, 0, 0);
+    const mEnd = new Date(gey, gem-1, ged, 23, 59, 59, 999);
+    const sub = {
+      start: mStart < range.start ? range.start : mStart,
+      end: mEnd > range.end ? range.end : mEnd
+    };
+    const d = calcPeriodData(sub);
+    out.push({ label: `${PDP_MONTHS[jm-1]} ${toFa(jy)}`, bills: d.totalBills, payments: d.totalPayments, billCount: d.billCount, paymentCount: d.paymentCount });
+    if (jy === eJy && jm === eJm) break;
+    [jy, jm] = [ny, nm];
+  }
+  return out;
+}
+function pctBadge(curr, prev, opt) {
+  opt = opt || {};
+  if (prev === 0 && curr === 0) return '<span class="pct-equal">—</span>';
+  if (prev === 0) return '<span class="pct-new">جدید</span>';
+  const pct = ((curr - prev) / prev) * 100;
+  if (Math.abs(pct) < 0.5) return '<span class="pct-equal">≈۰٪</span>';
+  const arrow = pct > 0 ? '▲' : '▼'; const sign = pct > 0 ? '+' : '';
+  let cls = 'pct-neutral';
+  if (!opt.neutral) { const isGood = opt.inverse ? pct > 0 : pct < 0; cls = isGood ? 'pct-good' : 'pct-bad'; }
+  return `<span class="${cls}">${arrow} ${sign}${toFa(Math.abs(pct).toFixed(1))}٪</span>`;
+}
+function renderPeriodCard(title, range, data, cls) {
+  const netColor = data.netChange >= 0 ? '#16a34a' : '#dc2626';
+  const netSign = data.netChange >= 0 ? '+' : '−';
+  return `<div class="period-card ${cls}"><h3>${title}</h3><div class="pc-dates">${fmtDateObj(range.start)} — ${fmtDateObj(range.end)}</div>
+    <div class="pc-stat"><span class="lbl">📋 هزینه‌ها</span><span class="val">${format(data.totalBills)} ت</span></div>
+    <div class="pc-stat"><span class="lbl">💵 پرداختی</span><span class="val" style="color:#16a34a">+${format(data.totalPayments)} ت</span></div>
+    <div class="pc-stat"><span class="lbl">📥 واریز صندوق</span><span class="val">${format(data.fundIncome)} ت</span></div>
+    <div class="pc-stat"><span class="lbl">📤 برداشت صندوق</span><span class="val" style="color:#dc2626">${format(data.fundWithdrawals)} ت</span></div>
+    <div class="pc-stat"><span class="lbl">⚖️ تراز</span><span class="val" style="color:${netColor}">${netSign}${format(Math.abs(data.netChange))} ت</span></div></div>`;
+}
+
+/* ================= Charts ================= */
+function barChartCard(title, items, opts) {
+  opts = opts || {};
+  const max = Math.max(...items.map(i => i.value), 1);
+  if (items.length === 0 || items.every(i => i.value === 0)) return `<div class="chart-card ${opts.fullWidth ? 'full-width' : ''}"><h4 class="chart-title">${title}</h4><div class="chart-empty">داده‌ای وجود ندارد</div></div>`;
+  const rows = items.map(i => {
+    const pct = (i.value / max * 100).toFixed(1);
+    return `<div class="chart-bar-row"><span class="chart-bar-label" title="${esc(i.label)}">${esc(i.label)}</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${pct}%;background:${i.color || opts.color || 'var(--primary)'};"></div></div><span class="chart-bar-value">${format(i.value)}</span></div>`;
+  }).join('');
+  return `<div class="chart-card ${opts.fullWidth ? 'full-width' : ''}"><h4 class="chart-title">${title}</h4><div class="chart-bars">${rows}</div></div>`;
+}
+function vBarChartCard(title, groups, series, opts) {
+  opts = opts || {};
+  const allVals = groups.flatMap(g => g.values);
+  const max = Math.max(...allVals, 1);
+  if (groups.length === 0 || allVals.every(v => v === 0)) return `<div class="chart-card ${opts.fullWidth ? 'full-width' : ''}"><h4 class="chart-title">${title}</h4><div class="chart-empty">داده‌ای وجود ندارد</div></div>`;
+  const cols = groups.map(g => {
+    const bars = g.values.map((v, i) => `<div class="chart-v-bar" style="height:${(v/max*100).toFixed(1)}%;background:${series[i]?.color || '#94a3b8'};" data-value="${format(v)}"></div>`).join('');
+    return `<div class="chart-v-group"><div class="chart-v-bars">${bars}</div><span class="chart-v-label">${esc(g.label)}</span></div>`;
+  }).join('');
+  const legend = series.map(s => `<span class="chart-legend-item"><span class="chart-legend-dot" style="background:${s.color};"></span>${s.label}</span>`).join('');
+  return `<div class="chart-card ${opts.fullWidth ? 'full-width' : ''}"><h4 class="chart-title">${title}</h4><div class="chart-v-container">${cols}</div><div class="chart-legend">${legend}</div></div>`;
+}
+function donutChartCard(title, items) {
+  const total = items.reduce((s, i) => s + i.value, 0);
+  if (total === 0) return `<div class="chart-card"><h4 class="chart-title">${title}</h4><div class="chart-empty">داده‌ای وجود ندارد</div></div>`;
+  let accumulated = 0;
+  const segments = items.filter(i => i.value > 0).map(i => {
+    const pct = (i.value / total) * 100;
+    const seg = `${i.color} ${accumulated}% ${accumulated + pct}%`;
+    accumulated += pct; return seg;
+  }).join(', ');
+  const legend = items.map(i => `<div class="dl-item"><span class="dl-color" style="background:${i.color};"></span><span class="dl-label">${i.label}</span><span class="dl-value">${format(i.value)} (${toFa((i.value/total*100).toFixed(1))}٪)</span></div>`).join('');
+  return `<div class="chart-card"><h4 class="chart-title">${title}</h4><div class="chart-donut-wrap"><div class="chart-donut" style="background: conic-gradient(${segments});"></div><div class="chart-donut-legend">${legend}</div></div></div>`;
+}
+
+/* ================= Period Report ================= */
+function renderPeriodReport() {
+  const months = parseInt(document.getElementById('periodMonths').value) || 3;
+  let refIso = getPdpIso('periodReference');
+  if (!refIso) { refIso = todayIso(); setPdpValue(document.getElementById('periodReference'), refIso); }
+
+  // *** Jalali periods ***
+  const periods = jalaliPeriods(months, refIso);
+  const currRange = periods.curr;
+  const prevRange = periods.prev;
+  const lyRange = periods.ly;
+  const curr = calcPeriodData(currRange);
+  const prev = calcPeriodData(prevRange);
+  const ly = calcPeriodData(lyRange);
+  const labels = { 3: '۳ ماهه', 6: '۶ ماهه', 9: '۹ ماهه', 12: 'یکساله' };
+
+  // Subtitle with Jalali month names
+  document.getElementById('periodSubtitle').textContent = `${labels[months]} — ${periods.label}`;
+
+  const noDateCount = bills.filter(b => !b.date).length;
+  const warning = noDateCount > 0 ? `<div class="bill-info-banner warn">⚠️ ${toFa(noDateCount)} قبض بدون تاریخ در گزارش دوره‌ای لحاظ نمی‌شود.</div>` : '';
+
+  const cards = `<div class="period-cards">
+    ${renderPeriodCard('📌 دوره جاری', currRange, curr, 'current')}
+    ${renderPeriodCard('📅 دوره قبل', prevRange, prev, '')}
+    ${renderPeriodCard('📆 سال قبل', lyRange, ly, '')}
+  </div>`;
+
+  const makeRow = (label, c, p, l, opt) => `<tr>
+    <td class="metric-name">${label}</td>
+    <td class="val-curr">${format(c)}</td>
+    <td>${format(p)}</td>
+    <td>${pctBadge(c, p, opt)}</td>
+    <td>${format(l)}</td>
+    <td>${pctBadge(c, l, opt)}</td>
+  </tr>`;
+
+  // Building table
+  const buildingCurr = calcPeriodData(currRange, ['ساختمان']);
+  const buildingPrev = calcPeriodData(prevRange, ['ساختمان']);
+  const buildingLy = calcPeriodData(lyRange, ['ساختمان']);
+  const buildingRows = 
+    makeRow('🏢 جمع قبض ساختمان', buildingCurr.byType['ساختمان'], buildingPrev.byType['ساختمان'], buildingLy.byType['ساختمان']) +
+    makeRow('🔢 تعداد قبض ساختمان', buildingCurr.billCount, buildingPrev.billCount, buildingLy.billCount, { neutral: true });
+  const tableBuilding = `<h3 class="period-h3">🏢 هزینه‌های ساختمان</h3>
+    <div class="table-wrap"><table class="period-table building-table">
+      <thead><tr><th>شاخص</th><th>دوره جاری</th><th>دوره قبل</th><th>تغییر</th><th>سال قبل</th><th>تغییر</th></tr></thead>
+      <tbody>${buildingRows}</tbody></table></div>`;
+
+  // Utilities table
+  const utilCurr = calcPeriodData(currRange, ['آب', 'گاز']);
+  const utilPrev = calcPeriodData(prevRange, ['آب', 'گاز']);
+  const utilLy = calcPeriodData(lyRange, ['آب', 'گاز']);
+  const utilRows = 
+    makeRow('💧 قبض آب', utilCurr.byType['آب'], utilPrev.byType['آب'], utilLy.byType['آب']) +
+    makeRow('🔥 قبض گاز', utilCurr.byType['گاز'], utilPrev.byType['گاز'], utilLy.byType['گاز']) +
+    `<tr class="total-row"><td class="metric-name">جمع سایر هزینه‌ها</td><td>${format(utilCurr.totalBills)}</td><td>${format(utilPrev.totalBills)}</td><td>${pctBadge(utilCurr.totalBills, utilPrev.totalBills)}</td><td>${format(utilLy.totalBills)}</td><td>${pctBadge(utilCurr.totalBills, utilLy.totalBills)}</td></tr>`;
+  const tableUtilities = `<h3 class="period-h3">💧🔥 سایر هزینه‌ها (آب و گاز)</h3>
+    <div class="table-wrap"><table class="period-table utility-table">
+      <thead><tr><th>شاخص</th><th>دوره جاری</th><th>دوره قبل</th><th>تغییر</th><th>سال قبل</th><th>تغییر</th></tr></thead>
+      <tbody>${utilRows}</tbody></table></div>`;
+
+  // Construction & fund
+  const constrCurr = calcPeriodData(currRange, ['عمرانی']);
+  const constrPrev = calcPeriodData(prevRange, ['عمرانی']);
+  const constrLy = calcPeriodData(lyRange, ['عمرانی']);
+  const constrBalance = (d) => d.fundIncome - d.fundWithdrawals;
+  const constrRows = 
+    makeRow('🔨 هزینه عمرانی', constrCurr.byType['عمرانی'], constrPrev.byType['عمرانی'], constrLy.byType['عمرانی']) +
+    makeRow('📥 واریز به صندوق', constrCurr.fundIncome, constrPrev.fundIncome, constrLy.fundIncome, { inverse: true }) +
+    makeRow('📤 برداشت از صندوق', constrCurr.fundWithdrawals, constrPrev.fundWithdrawals, constrLy.fundWithdrawals) +
+    `<tr class="total-row"><td class="metric-name">⚖️ تراز صندوق دوره</td><td>${format(constrBalance(constrCurr))}</td><td>${format(constrBalance(constrPrev))}</td><td>${pctBadge(constrBalance(constrCurr), constrBalance(constrPrev), { inverse: true })}</td><td>${format(constrBalance(constrLy))}</td><td>${pctBadge(constrBalance(constrCurr), constrBalance(constrLy), { inverse: true })}</td></tr>`;
+  const tableConstruction = `<h3 class="period-h3">🔨💰 عمرانی و صندوق ساختمان</h3>
+    <div class="table-wrap"><table class="period-table construction-table">
+      <thead><tr><th>شاخص</th><th>دوره جاری</th><th>دوره قبل</th><th>تغییر</th><th>سال قبل</th><th>تغییر</th></tr></thead>
+      <tbody>${constrRows}</tbody></table></div>`;
+
+  // Aggregate
+  const aggRows = 
+    `<tr><td class="metric-name">💰 جمع کل هزینه‌ها</td><td class="val-curr">${format(curr.totalBills)}</td><td>${format(prev.totalBills)}</td><td>${pctBadge(curr.totalBills, prev.totalBills)}</td><td>${format(ly.totalBills)}</td><td>${pctBadge(curr.totalBills, ly.totalBills)}</td></tr>` +
+    `<tr><td class="metric-name">💵 جمع پرداختی‌ها</td><td class="val-curr">${format(curr.totalPayments)}</td><td>${format(prev.totalPayments)}</td><td>${pctBadge(curr.totalPayments, prev.totalPayments, { inverse: true })}</td><td>${format(ly.totalPayments)}</td><td>${pctBadge(curr.totalPayments, ly.totalPayments, { inverse: true })}</td></tr>` +
+    `<tr><td class="metric-name">📥 جمع واریز صندوق</td><td class="val-curr">${format(curr.fundIncome)}</td><td>${format(prev.fundIncome)}</td><td>${pctBadge(curr.fundIncome, prev.fundIncome, { inverse: true })}</td><td>${format(ly.fundIncome)}</td><td>${pctBadge(curr.fundIncome, ly.fundIncome, { inverse: true })}</td></tr>` +
+    `<tr><td class="metric-name">📤 جمع برداشت صندوق</td><td class="val-curr">${format(curr.fundWithdrawals)}</td><td>${format(prev.fundWithdrawals)}</td><td>${pctBadge(curr.fundWithdrawals, prev.fundWithdrawals)}</td><td>${format(ly.fundWithdrawals)}</td><td>${pctBadge(curr.fundWithdrawals, ly.fundWithdrawals)}</td></tr>` +
+    `<tr><td class="metric-name">🔢 تعداد قبض</td><td class="val-curr">${format(curr.billCount)}</td><td>${format(prev.billCount)}</td><td>${pctBadge(curr.billCount, prev.billCount, { neutral: true })}</td><td>${format(ly.billCount)}</td><td>${pctBadge(curr.billCount, ly.billCount, { neutral: true })}</td></tr>` +
+    `<tr><td class="metric-name">🔢 تعداد پرداخت</td><td class="val-curr">${format(curr.paymentCount)}</td><td>${format(prev.paymentCount)}</td><td>${pctBadge(curr.paymentCount, prev.paymentCount, { neutral: true })}</td><td>${format(ly.paymentCount)}</td><td>${pctBadge(curr.paymentCount, ly.paymentCount, { neutral: true })}</td></tr>` +
+    `<tr class="total-row"><td class="metric-name">⚖️ تراز کل دوره</td><td>${format(curr.netChange)}</td><td>${format(prev.netChange)}</td><td>${pctBadge(curr.netChange, prev.netChange, { inverse: true })}</td><td>${format(ly.netChange)}</td><td>${pctBadge(curr.netChange, ly.netChange, { inverse: true })}</td></tr>`;
+  const tableAggregate = `<h3 class="period-h3">📊 تجمیع کل دوره</h3>
+    <div class="table-wrap"><table class="period-table aggregate-table">
+      <thead><tr><th>شاخص</th><th>دوره جاری</th><th>دوره قبل</th><th>تغییر</th><th>سال قبل</th><th>تغییر</th></tr></thead>
+      <tbody>${aggRows}</tbody></table></div>`;
+
+  // Monthly breakdown
+  const monthly = getMonthlyBreakdown(currRange);
+  const monthlyRows = monthly.map(m => `<tr><td class="metric-name">${m.label}</td><td>${format(m.bills)}</td><td>${format(m.payments)}</td><td>${toFa(m.billCount)}</td><td>${toFa(m.paymentCount)}</td></tr>`).join('');
+  const tableMonthly = `<h3 class="period-h3">📅 ریز عملکرد ماهانه (شمسی)</h3>
+    <div class="table-wrap"><table class="period-table">
+      <thead><tr><th>ماه</th><th>هزینه‌ها</th><th>پرداختی‌ها</th><th>تعداد قبض</th><th>تعداد پرداخت</th></tr></thead>
+      <tbody>${monthlyRows || '<tr><td colspan="5" class="empty">داده‌ای وجود ندارد</td></tr>'}</tbody></table></div>`;
+
+  // Charts
+  const chart1 = vBarChartCard('📊 مقایسه هزینه‌ها و پرداختی‌ها در دوره‌ها',
+    [{ label: 'دوره جاری', values: [curr.totalBills, curr.totalPayments] },
+     { label: 'دوره قبل', values: [prev.totalBills, prev.totalPayments] },
+     { label: 'سال قبل', values: [ly.totalBills, ly.totalPayments] }],
+    [{ label: 'هزینه‌ها', color: '#ef4444' }, { label: 'پرداختی‌ها', color: '#10b981' }]
+  );
+  const chart2 = vBarChartCard('🏢 مقایسه قبض ساختمان',
+    [{ label: 'دوره جاری', values: [buildingCurr.byType['ساختمان']] },
+     { label: 'دوره قبل', values: [buildingPrev.byType['ساختمان']] },
+     { label: 'سال قبل', values: [buildingLy.byType['ساختمان']] }],
+    [{ label: 'قبض ساختمان', color: '#6366f1' }]
+  );
+  const chart3 = barChartCard('💧🔥 تفکیک آب و گاز (دوره جاری)',
+    [{ label: '💧 قبض آب', value: curr.byType['آب'], color: '#3b82f6' },
+     { label: '🔥 قبض گاز', value: curr.byType['گاز'], color: '#f59e0b' }]
+  );
+  const chart4 = vBarChartCard('🔨💰 هزینه عمرانی و صندوق ساختمان',
+    [{ label: 'دوره جاری', values: [constrCurr.byType['عمرانی'], constrCurr.fundIncome, constrCurr.fundWithdrawals] },
+     { label: 'دوره قبل', values: [constrPrev.byType['عمرانی'], constrPrev.fundIncome, constrPrev.fundWithdrawals] },
+     { label: 'سال قبل', values: [constrLy.byType['عمرانی'], constrLy.fundIncome, constrLy.fundWithdrawals] }],
+    [{ label: '🔨 عمرانی', color: '#dc2626' }, { label: '📥 واریز صندوق', color: '#16a34a' }, { label: '📤 برداشت صندوق', color: '#d97706' }],
+    { fullWidth: true }
+  );
+  const chart5 = donutChartCard('🍩 تفکیک کل هزینه‌های دوره جاری',
+    [{ label: '🏢 ساختمان', value: curr.byType['ساختمان'], color: '#6366f1' },
+     { label: '🔨 عمرانی', value: curr.byType['عمرانی'], color: '#ec4899' },
+     { label: '💧 آب', value: curr.byType['آب'], color: '#3b82f6' },
+     { label: '🔥 گاز', value: curr.byType['گاز'], color: '#f59e0b' }]
+  );
+  const chart6 = vBarChartCard('📅 روند ماهانه هزینه‌ها و پرداختی‌ها',
+    monthly.map(m => ({ label: m.label, values: [m.bills, m.payments] })),
+    [{ label: 'هزینه‌ها', color: '#ef4444' }, { label: 'پرداختی‌ها', color: '#10b981' }],
+    { fullWidth: true }
+  );
+
+  const chartsSection = `<div class="charts-section">
+    <div class="chart-section-title">📈 نمودارهای عملکرد دوره‌ای</div>
+    <div class="chart-grid">${chart1}${chart2}${chart3}${chart4}${chart5}${chart6}</div>
+  </div>`;
+
+  document.getElementById('periodReportBody').innerHTML = warning + cards + tableBuilding + tableUtilities + tableConstruction + tableAggregate + tableMonthly + chartsSection;
+}
+
+/* ================= Init ================= */
 applyTheme(currentTheme);
-window.onload = () => {
-  const today = new Date().toISOString().slice(0, 10);
+function initAll() {
   const pd = document.getElementById('paymentDate');
-  if (pd) pd.value = today;
+  if (pd && !pd.dataset.iso) setPdpValue(pd, todayIso());
+  initPdp('paymentDate');
+  const pr = document.getElementById('periodReference');
+  if (pr && !pr.dataset.iso) setPdpValue(pr, todayIso());
+  initPdp('periodReference');
   selectPayType('regular');
   syncPaidStatus();
   render();
   updateQuickNavActive();
-};
+}
+window.onload = initAll;
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
-  setTimeout(() => {
-    const today = new Date().toISOString().slice(0, 10);
-    const pd = document.getElementById('paymentDate');
-    if (pd && !pd.value) pd.value = today;
-    selectPayType('regular');
-    syncPaidStatus();
-    render();
-    updateQuickNavActive();
-  }, 50);
+  setTimeout(initAll, 50);
 }
 </script>
 
-<!-- ===== PWA Service Worker ===== -->
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then((reg) => console.log('✅ Service Worker ثبت شد'))
-        .catch((err) => console.log('❌ خطا در Service Worker:', err));
+      navigator.serviceWorker.register('sw.js').then(r => console.log('✅ SW')).catch(e => console.log('❌ SW', e));
     });
   }
 </script>
-
 </body>
 </html>
